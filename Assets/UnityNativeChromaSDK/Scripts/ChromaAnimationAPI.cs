@@ -1251,7 +1251,7 @@ namespace ChromaSDK
             string sourcePath = GetStreamingPath(sourceAnimation);
             IntPtr lpSourceData = GetIntPtr(sourcePath);
             string targetPath = GetStreamingPath(sourceAnimation);
-            IntPtr lpTargetData = GetIntPtr(sourcePath);
+            IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
                 if (lpSourceData != IntPtr.Zero)
@@ -1274,7 +1274,7 @@ namespace ChromaSDK
             string sourcePath = GetStreamingPath(sourceAnimation);
             IntPtr lpSourceData = GetIntPtr(sourcePath);
             string targetPath = GetStreamingPath(sourceAnimation);
-            IntPtr lpTargetData = GetIntPtr(sourcePath);
+            IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
                 if (lpSourceData != IntPtr.Zero)
@@ -1297,7 +1297,7 @@ namespace ChromaSDK
             string sourcePath = GetStreamingPath(sourceAnimation);
             IntPtr lpSourceData = GetIntPtr(sourcePath);
             string targetPath = GetStreamingPath(sourceAnimation);
-            IntPtr lpTargetData = GetIntPtr(sourcePath);
+            IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
                 if (lpSourceData != IntPtr.Zero)
@@ -1750,6 +1750,92 @@ namespace ChromaSDK
         /// <param name="loop"></param>
         [DllImport(DLL_NAME)]
         private static extern void PluginResumeAnimationName(IntPtr path, bool loop);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMultiplyIntensityAllFramesRGBName(IntPtr path, int red, int green, int blue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFillThresholdColorsMinMaxAllFramesRGBName(IntPtr path, int minThreshold, int minRed, int minGreen, int minBlue, int maxThreshold, int maxRed, int maxGreen, int maxBlue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMakeBlankFramesRGBName(IntPtr path, int frameCount, float duration, int red, int green, int blue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFadeStartFramesName(IntPtr path, int fade);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFadeEndFramesName(IntPtr path, int fade);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMultiplyIntensityName(IntPtr path, int frameId, float intensity);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMultiplyIntensityColorName(IntPtr path, int frameId, int color);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFillThresholdColorsRGBName(IntPtr path, int frameId, int threshold, int red, int green, int blue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFillThresholdColorsAllFramesRGBName(IntPtr path, int threshold, int red, int green, int blue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginOverrideFrameDurationName(IntPtr path, float duration);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginInvertColorsAllFramesName(IntPtr path);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginReduceFramesName(IntPtr path, int n);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginDuplicateFramesName(IntPtr path);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMakeBlankFramesName(IntPtr path, int frameCount, float duration, int color);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginTrimStartFramesName(IntPtr path, int numberOfFrames);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginTrimEndFramesName(IntPtr path, int lastFrameId);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginDuplicateFirstFrameName(IntPtr path, int frameCount);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFillZeroColorAllFramesRGBName(IntPtr path, int red, int green, int blue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginReverseAllFramesName(IntPtr path);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginDuplicateMirrorFramesName(IntPtr path);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFillRandomColorsBlackAndWhiteAllFramesName(IntPtr path);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMultiplyIntensityRGBName(IntPtr path, int frameId, int red, int green, int blue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFillThresholdColorsAllFramesName(IntPtr path, int threshold, int color);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginInsertDelayName(IntPtr path, int frameId, int delay);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginAddNonZeroAllKeysAllFramesName(IntPtr sourceAnimation, IntPtr targetAnimation);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginCopyNonZeroTargetAllKeysAllFramesName(IntPtr sourceAnimation, IntPtr targetAnimation);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginSubtractNonZeroAllKeysAllFramesName(IntPtr sourceAnimation, IntPtr targetAnimation);
+
+        [DllImport(DLL_NAME)]
+        private static extern int PluginLerpColor(int from, int to, float t);
+
+        /// HELPERS ///
 
         #region Helpers (handle path conversions)
 
