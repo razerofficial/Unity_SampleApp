@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class SampleApp : MonoBehaviour
 {
+    public void OnApplicationQuit()
+    {
+        ChromaAnimationAPI.Uninit();
+    }
+
     private string GetEffectName(int index)
     {
         string result = string.Format("Effect{0}", index);

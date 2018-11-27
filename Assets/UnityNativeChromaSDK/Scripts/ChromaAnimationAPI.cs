@@ -12,17 +12,19 @@ namespace ChromaSDK
     public class ChromaAnimationAPI
     {
 #if UNITY_3 || UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-        const string DLL_NAME = "UnityNativeChromaSDK3";
+        const string DLL_NAME = "CChromaEditorLibrary3";
 
+#elif UNITY_64
+        const string DLL_NAME = "CChromaEditorLibrary64";
 #else
-        const string DLL_NAME = "UnityNativeChromaSDK";
+        const string DLL_NAME = "CChromaEditorLibrary";
 #endif
 
-		/// <summary>
-		/// Get the plugin version
-		/// </summary>
-		/// <returns></returns>
-		public static string GetVersion()
+        /// <summary>
+        /// Get the plugin version
+        /// </summary>
+        /// <returns></returns>
+        public static string GetVersion()
 		{
 			return "1.11";
 		}
@@ -1250,7 +1252,7 @@ namespace ChromaSDK
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             string sourcePath = GetStreamingPath(sourceAnimation);
             IntPtr lpSourceData = GetIntPtr(sourcePath);
-            string targetPath = GetStreamingPath(sourceAnimation);
+            string targetPath = GetStreamingPath(targetAnimation);
             IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
@@ -1273,7 +1275,7 @@ namespace ChromaSDK
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             string sourcePath = GetStreamingPath(sourceAnimation);
             IntPtr lpSourceData = GetIntPtr(sourcePath);
-            string targetPath = GetStreamingPath(sourceAnimation);
+            string targetPath = GetStreamingPath(targetAnimation);
             IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
@@ -1296,7 +1298,7 @@ namespace ChromaSDK
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             string sourcePath = GetStreamingPath(sourceAnimation);
             IntPtr lpSourceData = GetIntPtr(sourcePath);
-            string targetPath = GetStreamingPath(sourceAnimation);
+            string targetPath = GetStreamingPath(targetAnimation);
             IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
