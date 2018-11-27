@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class SampleApp : MonoBehaviour
 {
+    public void Start()
+    {
+        ChromaAnimationAPI.Init();
+    }
     public void OnApplicationQuit()
     {
         ChromaAnimationAPI.Uninit();
