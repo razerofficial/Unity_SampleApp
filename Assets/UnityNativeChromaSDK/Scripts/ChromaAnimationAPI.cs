@@ -1247,6 +1247,106 @@ namespace ChromaSDK
 #endif
         }
 
+        public static void MultiplyTargetColorLerpAllFramesName(string animation, int color1, int color2)
+        {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            string path = GetStreamingPath(animation);
+            IntPtr lpData = GetIntPtr(path);
+            try
+            {
+                if (lpData != IntPtr.Zero)
+                {
+                    PluginMultiplyTargetColorLerpAllFramesName(lpData, color1, color2);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("MultiplyTargetColorLerpAllFramesName: Animation: {0} exception={1}", animation, ex));
+            }
+            FreeIntPtr(lpData);
+#endif
+        }
+
+        public static void SetChromaCustomFlagName(string animation, bool flag)
+        {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            string path = GetStreamingPath(animation);
+            IntPtr lpData = GetIntPtr(path);
+            try
+            {
+                if (lpData != IntPtr.Zero)
+                {
+                    PluginSetChromaCustomFlagName(lpData, flag);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("SetChromaCustomFlagName: Animation: {0} exception={1}", animation, ex));
+            }
+            FreeIntPtr(lpData);
+#endif
+        }
+
+        public static void SetChromaCustomColorAllFramesName(string animation)
+        {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            string path = GetStreamingPath(animation);
+            IntPtr lpData = GetIntPtr(path);
+            try
+            {
+                if (lpData != IntPtr.Zero)
+                {
+                    PluginSetChromaCustomColorAllFramesName(lpData);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("SetChromaCustomColorAllFramesName: Animation: {0} exception={1}", animation, ex));
+            }
+            FreeIntPtr(lpData);
+#endif
+        }
+
+        public static void MultiplyNonZeroTargetColorLerpAllFramesName(string animation, int color1, int color2)
+        {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            string path = GetStreamingPath(animation);
+            IntPtr lpData = GetIntPtr(path);
+            try
+            {
+                if (lpData != IntPtr.Zero)
+                {
+                    PluginMultiplyNonZeroTargetColorLerpAllFramesName(lpData, color1, color2);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("MultiplyNonZeroTargetColorLerpAllFramesName: Animation: {0} exception={1}", animation, ex));
+            }
+            FreeIntPtr(lpData);
+#endif
+        }
+
+        public static void FillNonZeroColorAllFramesRGBName(string animation, int red, int green, int blue)
+        {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            string path = GetStreamingPath(animation);
+            IntPtr lpData = GetIntPtr(path);
+            try
+            {
+                if (lpData != IntPtr.Zero)
+                {
+                    PluginFillNonZeroColorAllFramesRGBName(lpData, red, green, blue);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("FillNonZeroColorAllFramesRGBName: Animation: {0} exception={1}", animation, ex));
+            }
+            FreeIntPtr(lpData);
+#endif
+        }
+
         public static void AddNonZeroAllKeysAllFramesName(string sourceAnimation, string targetAnimation)
         {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
@@ -1256,7 +1356,8 @@ namespace ChromaSDK
             IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
-                if (lpSourceData != IntPtr.Zero)
+                if (lpSourceData != IntPtr.Zero &&
+                    lpTargetData != IntPtr.Zero)
                 {
                     PluginAddNonZeroAllKeysAllFramesName(lpSourceData, lpTargetData);
                 }
@@ -1279,7 +1380,8 @@ namespace ChromaSDK
             IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
-                if (lpSourceData != IntPtr.Zero)
+                if (lpSourceData != IntPtr.Zero &&
+                    lpTargetData != IntPtr.Zero)
                 {
                     PluginCopyNonZeroTargetAllKeysAllFramesName(lpSourceData, lpTargetData);
                 }
@@ -1302,7 +1404,8 @@ namespace ChromaSDK
             IntPtr lpTargetData = GetIntPtr(targetPath);
             try
             {
-                if (lpSourceData != IntPtr.Zero)
+                if (lpSourceData != IntPtr.Zero &&
+                    lpTargetData != IntPtr.Zero)
                 {
                     PluginSubtractNonZeroAllKeysAllFramesName(lpSourceData, lpTargetData);
                 }
@@ -1310,6 +1413,30 @@ namespace ChromaSDK
             catch (Exception ex)
             {
                 Debug.LogError(string.Format("SubtractNonZeroAllKeysAllFramesName: Animation: {0} exception={1}", sourceAnimation, ex));
+            }
+            FreeIntPtr(lpSourceData);
+            FreeIntPtr(lpTargetData);
+#endif
+        }
+
+        public static void CopyNonZeroAllKeysAllFramesOffsetName(string sourceAnimation, string targetAnimation, int offset)
+        {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+        string sourcePath = GetStreamingPath(sourceAnimation);
+            IntPtr lpSourceData = GetIntPtr(sourcePath);
+            string targetPath = GetStreamingPath(targetAnimation);
+            IntPtr lpTargetData = GetIntPtr(targetPath);
+            try
+            {
+                if (lpSourceData != IntPtr.Zero &&
+                    lpTargetData != IntPtr.Zero)
+                {
+                    PluginCopyNonZeroAllKeysAllFramesOffsetName(lpSourceData, lpTargetData, offset);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(string.Format("CopyNonZeroAllKeysAllFramesOffsetName: Animation: {0} exception={1}", sourceAnimation, ex));
             }
             FreeIntPtr(lpSourceData);
             FreeIntPtr(lpTargetData);
@@ -1836,6 +1963,25 @@ namespace ChromaSDK
 
         [DllImport(DLL_NAME)]
         private static extern int PluginLerpColor(int from, int to, float t);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMultiplyTargetColorLerpAllFramesName(IntPtr path, int color1, int color2);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginSetChromaCustomFlagName(IntPtr path, bool flag);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginSetChromaCustomColorAllFramesName(IntPtr path);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginMultiplyNonZeroTargetColorLerpAllFramesName(IntPtr path, int color1, int color2);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginFillNonZeroColorAllFramesRGBName(IntPtr path, int red, int green, int blue);
+
+        [DllImport(DLL_NAME)]
+        private static extern void PluginCopyNonZeroAllKeysAllFramesOffsetName(IntPtr sourceAnimation, IntPtr targetAnimation, int offset);
+
 
         /// HELPERS ///
 
