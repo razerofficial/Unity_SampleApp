@@ -4,17 +4,196 @@ using UnityEngine;
 
 public class SampleApp : MonoBehaviour
 {
-
-    // Use this for initialization
-    void Start()
+    private string GetEffectName(int index)
     {
-
+        string result = string.Format("Effect{0}", index);
+        return result;
     }
 
-    // Update is called once per frame
-    void Update()
+    private bool ShowHeader(int index)
     {
+        switch (index)
+        {
+            case 1:
+            case 10:
+            case 20:
+            case 30:
+                return true;
+            default:
+                return false;
+        }
+    }
 
+    private bool ShowFooter(int index)
+    {
+        switch (index)
+        {
+            case 9:
+            case 19:
+            case 29:
+            case 39:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void ExecuteItem(int index)
+    {
+        switch (index)
+        {
+            case 1:
+                ShowTableEffect1();
+                break;
+            case 2:
+                ShowTableEffect2();
+                break;
+            case 3:
+                ShowTableEffect3();
+                break;
+            case 4:
+                ShowTableEffect4();
+                break;
+            case 5:
+                ShowTableEffect5();
+                break;
+            case 6:
+                ShowTableEffect6();
+                break;
+            case 7:
+                ShowTableEffect7();
+                break;
+            case 8:
+                ShowTableEffect8();
+                break;
+            case 9:
+                ShowTableEffect9();
+                break;
+            case 10:
+                ShowTableEffect10();
+                break;
+            case 11:
+                ShowTableEffect11();
+                break;
+            case 12:
+                ShowTableEffect12();
+                break;
+            case 13:
+                ShowTableEffect13();
+                break;
+            case 14:
+                ShowTableEffect14();
+                break;
+            case 15:
+                ShowTableEffect15();
+                break;
+            case 16:
+                ShowTableEffect16();
+                break;
+            case 17:
+                ShowTableEffect17();
+                break;
+            case 18:
+                ShowTableEffect18();
+                break;
+            case 19:
+                ShowTableEffect19();
+                break;
+            case 20:
+                ShowTableEffect20();
+                break;
+            case 21:
+                ShowTableEffect21();
+                break;
+            case 22:
+                ShowTableEffect22();
+                break;
+            case 23:
+                ShowTableEffect23();
+                break;
+            case 24:
+                ShowTableEffect24();
+                break;
+            case 25:
+                ShowTableEffect25();
+                break;
+            case 26:
+                ShowTableEffect26();
+                break;
+            case 27:
+                ShowTableEffect27();
+                break;
+            case 28:
+                ShowTableEffect28();
+                break;
+            case 29:
+                ShowTableEffect29();
+                break;
+            case 30:
+                ShowTableEffect30();
+                break;
+            case 31:
+                ShowTableEffect31();
+                break;
+            case 32:
+                ShowTableEffect32();
+                break;
+            case 33:
+                ShowTableEffect33();
+                break;
+            case 34:
+                ShowTableEffect34();
+                break;
+            case 35:
+                ShowTableEffect35();
+                break;
+            case 36:
+                ShowTableEffect36();
+                break;
+            case 37:
+                ShowTableEffect37();
+                break;
+            case 38:
+                ShowTableEffect38();
+                break;
+            case 39:
+                ShowTableEffect39();
+                break;
+        }
+    }
+
+    public void OnGUI()
+    {
+        GUILayout.FlexibleSpace();
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+        GUILayout.FlexibleSpace();
+
+        const float height = 40;
+
+        for (int index = 1; index < 40; ++index)
+        {
+            if (ShowHeader(index))
+            {
+                GUILayout.BeginVertical(GUILayout.Height(Screen.height));
+                GUILayout.FlexibleSpace();
+            }
+
+            if (GUILayout.Button(GetEffectName(index), GUILayout.Height(height)))
+            {
+                ExecuteItem(index);
+            }
+
+            if (ShowFooter(index))
+            {
+                GUILayout.FlexibleSpace();
+                GUILayout.EndVertical();
+            }
+
+        }
+
+        GUILayout.FlexibleSpace();        
+        GUILayout.EndHorizontal();
+        GUILayout.FlexibleSpace();
     }
 
     // autogenerated code
