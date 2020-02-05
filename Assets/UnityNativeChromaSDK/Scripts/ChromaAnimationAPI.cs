@@ -175,18 +175,22 @@ namespace ChromaSDK
     public class ChromaAnimationAPI
     {
 #if PLATFORM_XBOXONE
+    #if UNITY_EDITOR
+        const string DLL_NAME = "CChromaEditorLibrary";
+    #else
         const string DLL_NAME = "XDKChromaEditorLibrary";
+    #endif
 #else
     #if UNITY_3 || UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-            const string DLL_NAME = "CChromaEditorLibrary3";
+        const string DLL_NAME = "CChromaEditorLibrary3";
     #elif UNITY_64
-            const string DLL_NAME = "CChromaEditorLibrary64";
+        const string DLL_NAME = "CChromaEditorLibrary64";
     #else
-            const string DLL_NAME = "CChromaEditorLibrary";
+        const string DLL_NAME = "CChromaEditorLibrary";
     #endif
 #endif
 
-#region Data Structures
+        #region Data Structures
 
         public enum DeviceType
         {
