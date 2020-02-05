@@ -237,6 +237,19 @@ public class SampleApp : MonoBehaviour
                                 GUILayout.FlexibleSpace();
                             }
 
+                            if (index == 1)
+                            {
+                                GUILayout.BeginHorizontal(GUILayout.Width(200));
+                                GUILayout.Label(string.Format("Mouse X: {0} Y: {1}", 
+                                    Input.mousePosition.x, Input.mousePosition.y));
+                                GUILayout.EndHorizontal();
+                                GUILayout.Label(string.Format("LEFT: {0}", Input.GetMouseButton(0) ? "DOWN" : "UP"));
+                                GUILayout.Label(string.Format("MIDDLE: {0}", Input.GetMouseButton(2) ? "DOWN" : "UP"));
+                                GUILayout.Label(string.Format("RIGHT: {0}", Input.GetMouseButton(1) ? "DOWN" : "UP"));
+                                // text mouse
+                                GUI.Label(new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 20, 20), "o");
+                            }
+
                             if (GUILayout.Button(GetEffectName(index), GUILayout.Height(height)))
                             {
                                 ExecuteItem(index);
