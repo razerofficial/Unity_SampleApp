@@ -193,6 +193,9 @@ public class SampleApp : MonoBehaviour
         }
     }
 
+    private bool _mLastMouseLeftDown = false;
+    private string _mLastButtonName = string.Empty;
+
     public void OnGUI()
     {
         GUILayout.FlexibleSpace();
@@ -246,13 +249,34 @@ public class SampleApp : MonoBehaviour
                                 GUILayout.Label(string.Format("LEFT: {0}", Input.GetMouseButton(0) ? "DOWN" : "UP"));
                                 GUILayout.Label(string.Format("MIDDLE: {0}", Input.GetMouseButton(2) ? "DOWN" : "UP"));
                                 GUILayout.Label(string.Format("RIGHT: {0}", Input.GetMouseButton(1) ? "DOWN" : "UP"));
-                                // text mouse
-                                GUI.Label(new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 20, 20), "o");
                             }
 
-                            if (GUILayout.Button(GetEffectName(index), GUILayout.Height(height)))
+                            string buttonName = GetEffectName(index);
+                            Color oldColor = GUI.backgroundColor;
+                            if (buttonName == _mLastButtonName)
                             {
-                                ExecuteItem(index);
+                                GUI.backgroundColor = Color.green;
+                            }
+                            GUILayout.Button(buttonName, GUILayout.Height(height));
+                            if (buttonName == _mLastButtonName)
+                            {
+                                GUI.backgroundColor = oldColor;
+                            }
+                            Rect rect = GUILayoutUtility.GetLastRect();
+                            Vector3 pos = Input.mousePosition;
+                            pos.y = Screen.height - Input.mousePosition.y;
+                            if (rect.Contains(pos))
+                            {
+                                if (Input.GetMouseButton(0))
+                                {
+                                    _mLastMouseLeftDown = true;
+                                }
+                                else if (_mLastMouseLeftDown)
+                                {
+                                    _mLastMouseLeftDown = false;
+                                    _mLastButtonName = buttonName;
+                                    ExecuteItem(index);
+                                }
                             }
 
                             if (ShowFooter(index))
@@ -276,6 +300,9 @@ public class SampleApp : MonoBehaviour
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             GUILayout.FlexibleSpace();
+
+            // text mouse
+            GUI.Label(new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 20, 20), "o");
         }
     }
 
