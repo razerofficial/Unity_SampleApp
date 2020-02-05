@@ -4,3 +4,8 @@
 Library/
 obj/
 Temp/
+Build/
+Assets/Plugins/XDKChromaEditorLibrary.dll
+Assets/Plugins/XDKChromaEditorLibrary.dll.meta
+Logs/
+Packages/

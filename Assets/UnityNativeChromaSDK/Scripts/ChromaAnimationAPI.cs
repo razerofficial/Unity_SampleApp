@@ -174,16 +174,19 @@ namespace ChromaSDK
 
     public class ChromaAnimationAPI
     {
-#if UNITY_3 || UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
-        const string DLL_NAME = "CChromaEditorLibrary3";
-
-#elif UNITY_64
-        const string DLL_NAME = "CChromaEditorLibrary64";
+#if PLATFORM_XBOXONE
+        const string DLL_NAME = "XDKChromaEditorLibrary";
 #else
-        const string DLL_NAME = "CChromaEditorLibrary";
+    #if UNITY_3 || UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+            const string DLL_NAME = "CChromaEditorLibrary3";
+    #elif UNITY_64
+            const string DLL_NAME = "CChromaEditorLibrary64";
+    #else
+            const string DLL_NAME = "CChromaEditorLibrary";
+    #endif
 #endif
 
-        #region Data Structures
+#region Data Structures
 
         public enum DeviceType
         {
@@ -362,9 +365,9 @@ namespace ChromaSDK
             }
         }
 
-        #endregion
+#endregion
 
-        #region Helpers (handle path conversions)
+#region Helpers (handle path conversions)
 
         /// <summary>
         /// Helper to convert string to IntPtr
@@ -405,9 +408,9 @@ namespace ChromaSDK
         {
             return string.Format("{0}/{1}", Application.streamingAssetsPath, animation);
         }
-        #endregion
+#endregion
 
-        #region Public API Methods
+#region Public API Methods
         /// <summary>
         /// Adds a frame to the `Chroma` animation and sets the `duration` (in seconds). 
         /// The `color` is expected to be an array of the dimensions for the `deviceType/device`. 
@@ -5531,9 +5534,9 @@ namespace ChromaSDK
             PluginUsePreloadingName(lpPath, flag);
             FreeIntPtr(lpPath);
         }
-        #endregion
+#endregion
 
-        #region Private DLL Hooks
+#region Private DLL Hooks
         /// <summary>
         /// Adds a frame to the `Chroma` animation and sets the `duration` (in seconds). 
         /// The `color` is expected to be an array of the dimensions for the `deviceType/device`. 
@@ -8922,6 +8925,6 @@ namespace ChromaSDK
         /// </summary>
         [DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
         private static extern void PluginUsePreloadingName(IntPtr path, bool flag);
-        #endregion
+#endregion
     }
 }
