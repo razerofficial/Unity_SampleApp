@@ -1,5 +1,4 @@
 using ChromaSDK;
-using System;
 using UnityEngine;
 
 public class SampleApp : MonoBehaviour
@@ -1256,12 +1255,12 @@ public class SampleApp : MonoBehaviour
         // set all frames to white, with all frames set to 30FPS
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 255, 255, 255);
         //integer number of times to blink during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve, subtracting from one inverts the curve
-            float t = 1 - Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = 1 - Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // multiply the frame by the 't' intensity
             ChromaAnimationAPI.MultiplyIntensityName(baseLayer, frameId, t);
         }
@@ -1281,12 +1280,12 @@ public class SampleApp : MonoBehaviour
         // set all frames to white, with all frames set to 30FPS
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 255, 255, 255);
         //integer number of times to blink during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve, subtracting from one inverts the curve
-            float t = 1 - Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = 1 - Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // multiply the frame by the 't' intensity
             ChromaAnimationAPI.MultiplyIntensityName(baseLayer, frameId, t);
         }
@@ -1306,12 +1305,12 @@ public class SampleApp : MonoBehaviour
         // set all frames to white, with all frames set to 30FPS
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 255, 255, 255);
         //integer number of times to blink during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve, subtracting from one inverts the curve
-            float t = 1 - Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = 1 - Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // multiply the frame by the 't' intensity
             ChromaAnimationAPI.MultiplyIntensityName(baseLayer, frameId, t);
         }
@@ -1331,12 +1330,12 @@ public class SampleApp : MonoBehaviour
         // set all frames to white, with all frames set to 30FPS
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 255, 255, 255);
         //integer number of times to blink during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve, subtracting from one inverts the curve
-            float t = 1 - Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = 1 - Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // multiply the frame by the 't' intensity
             ChromaAnimationAPI.MultiplyIntensityName(baseLayer, frameId, t);
         }
@@ -1356,12 +1355,12 @@ public class SampleApp : MonoBehaviour
         // set all frames to white, with all frames set to 30FPS
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 255, 255, 255);
         //integer number of times to blink during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve, subtracting from one inverts the curve
-            float t = 1 - Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = 1 - Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // multiply the frame by the 't' intensity
             ChromaAnimationAPI.MultiplyIntensityName(baseLayer, frameId, t);
         }
@@ -1381,12 +1380,12 @@ public class SampleApp : MonoBehaviour
         // set all frames to white, with all frames set to 30FPS
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 255, 255, 255);
         //integer number of times to blink during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve, subtracting from one inverts the curve
-            float t = 1 - Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = 1 - Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // multiply the frame by the 't' intensity
             ChromaAnimationAPI.MultiplyIntensityName(baseLayer, frameId, t);
         }
@@ -1795,12 +1794,12 @@ public class SampleApp : MonoBehaviour
         int color1 = ChromaAnimationAPI.GetRGB(255, 0, 0); //red
         int color2 = ChromaAnimationAPI.GetRGB(0, 255, 0); //green
                                                            //integer number of times to transition during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve
-            float t = Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // use t to transition from color 1 to color 2
             int color = ChromaAnimationAPI.LerpColor(color1, color2, t);
             // give color to the layer
@@ -1821,12 +1820,12 @@ public class SampleApp : MonoBehaviour
         int color1 = ChromaAnimationAPI.GetRGB(255, 0, 0); //red
         int color2 = ChromaAnimationAPI.GetRGB(0, 255, 0); //green
                                                            //integer number of times to transition during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve
-            float t = Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // use t to transition from color 1 to color 2
             int color = ChromaAnimationAPI.LerpColor(color1, color2, t);
             // give color to the layer
@@ -1847,12 +1846,12 @@ public class SampleApp : MonoBehaviour
         int color1 = ChromaAnimationAPI.GetRGB(255, 0, 0); //red
         int color2 = ChromaAnimationAPI.GetRGB(0, 255, 0); //green
                                                            //integer number of times to transition during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve
-            float t = Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // use t to transition from color 1 to color 2
             int color = ChromaAnimationAPI.LerpColor(color1, color2, t);
             // give color to the layer
@@ -1873,12 +1872,12 @@ public class SampleApp : MonoBehaviour
         int color1 = ChromaAnimationAPI.GetRGB(255, 0, 0); //red
         int color2 = ChromaAnimationAPI.GetRGB(0, 255, 0); //green
                                                            //integer number of times to transition during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve
-            float t = Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // use t to transition from color 1 to color 2
             int color = ChromaAnimationAPI.LerpColor(color1, color2, t);
             // give color to the layer
@@ -1899,12 +1898,12 @@ public class SampleApp : MonoBehaviour
         int color1 = ChromaAnimationAPI.GetRGB(255, 0, 0); //red
         int color2 = ChromaAnimationAPI.GetRGB(0, 255, 0); //green
                                                            //integer number of times to transition during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve
-            float t = Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // use t to transition from color 1 to color 2
             int color = ChromaAnimationAPI.LerpColor(color1, color2, t);
             // give color to the layer
@@ -1925,12 +1924,12 @@ public class SampleApp : MonoBehaviour
         int color1 = ChromaAnimationAPI.GetRGB(255, 0, 0); //red
         int color2 = ChromaAnimationAPI.GetRGB(0, 255, 0); //green
                                                            //integer number of times to transition during animation
-        int speed = 2;
+        float speed = 2;
         // loop over all frames in the layer
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             //Math.cos gives a smooth 1 to 0 to 1 curve
-            float t = Mathf.Floor(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
+            float t = Mathf.Abs(Mathf.Cos(speed * Mathf.PI * (frameId + 1) / (float)frameCount));
             // use t to transition from color 1 to color 2
             int color = ChromaAnimationAPI.LerpColor(color1, color2, t);
             // give color to the layer
@@ -4421,11 +4420,11 @@ public class SampleApp : MonoBehaviour
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 64, 0, 64);
         int maxRow = ChromaAnimationAPI.GetMaxRow(ChromaAnimationAPI.Device2D.Keyboard);
         int maxColumn = ChromaAnimationAPI.GetMaxColumn(ChromaAnimationAPI.Device2D.Keyboard);
-        int startColumn = (int)(UnityEngine.Random.Range(0, maxColumn)) % 22;
-        int startRow = (int)(UnityEngine.Random.Range(0, maxRow)) % 6;
+        int startColumn = (int)Mathf.Floor(Random.Range(0.0f, 1.0f) * maxColumn) % 22;
+        int startRow = (int)Mathf.Floor(Random.Range(0.0f, 1.0f) * maxRow) % 6;
         int color = ChromaAnimationAPI.GetRGB(0, 255, 0);
-        float radius = 0;
-        float speed = 25 / (float)frameCount;
+        float radius = 0.0f;
+        float speed = 25.0f / (float)frameCount;
         int lineWidth = 2;
         for (int frameIndex = 0; frameIndex < frameCount; ++frameIndex)
         {
@@ -4434,11 +4433,11 @@ public class SampleApp : MonoBehaviour
             {
                 for (int i = 0; i < 360; ++i)
                 {
-                    float angle = i * Mathf.PI / 180f;
+                    float angle = i * Mathf.PI / 180.0f;
                     int r = (int)Mathf.Floor(startRow + stroke * Mathf.Sin(angle));
                     int c = (int)Mathf.Floor(startColumn + stroke * Mathf.Cos(angle));
                     if (r >= 0 && r < maxRow &&
-                        c >= 0 && c < maxColumn)
+                    c >= 0 && c < maxColumn)
                     {
                         int key = (r << 8) | c;
                         ChromaAnimationAPI.SetKeyColorName(baseLayer, frameIndex, key, color);
@@ -4543,19 +4542,19 @@ public class SampleApp : MonoBehaviour
         int maxRow = ChromaAnimationAPI.GetMaxRow(ChromaAnimationAPI.Device2D.Keyboard);
         int maxColumn = ChromaAnimationAPI.GetMaxColumn(ChromaAnimationAPI.Device2D.Keyboard);
         // pick first key
-        int pointAColumn = (int)(UnityEngine.Random.Range(0, maxColumn)) % 22;
-        int pointARow = (int)(UnityEngine.Random.Range(0, maxRow)) % 6;
+        int pointAColumn = (int)Mathf.Floor(Random.Range(0.0f, 1.0f) * maxColumn) % 22;
+        int pointARow = (int)Mathf.Floor(Random.Range(0.0f, 1.0f) * maxRow) % 6;
         // pick a different second key
         int pointBColumn;
         int pointBRow;
         do
         {
-            pointBColumn = (int)(UnityEngine.Random.Range(0, maxColumn)) % 22;
-            pointBRow = (int)(UnityEngine.Random.Range(0, maxRow)) % 6;
+            pointBColumn = (int)Mathf.Floor(Random.Range(0.0f, 1.0f) * maxColumn) % 22;
+            pointBRow = (int)Mathf.Floor(Random.Range(0.0f, 1.0f) * maxRow) % 6;
         } while (pointAColumn == pointBColumn && pointARow == pointBRow);
         int color = ChromaAnimationAPI.GetRGB(0, 255, 0);
         int frameIndex = 0;
-        for (float i = 0.0f; i <= 1.0f; i += 0.04f)
+        for (float i = 0.0f; i <= 1.0; i += 0.04f)
         { // 1.0/22.0
             int r = (int)Mathf.Floor(ChromaAnimationAPI.Lerp(pointARow, pointBRow, i));
             int c = (int)Mathf.Floor(ChromaAnimationAPI.Lerp(pointAColumn, pointBColumn, i));
@@ -4657,14 +4656,14 @@ public class SampleApp : MonoBehaviour
         int color2 = ChromaAnimationAPI.GetRGB(64, 0, 64);
         ChromaAnimationAPI.MultiplyTargetColorLerpAllFramesName(baseLayer, color1, color2);
         int[] keys = {
-            (int)Keyboard.RZKEY.RZKEY_W,
-            (int)Keyboard.RZKEY.RZKEY_A,
-            (int)Keyboard.RZKEY.RZKEY_S,
-            (int)Keyboard.RZKEY.RZKEY_D,
-            (int)Keyboard.RZKEY.RZKEY_P,
-            (int)Keyboard.RZKEY.RZKEY_M,
-            (int)Keyboard.RZKEY.RZKEY_F1,
-        };
+(int)Keyboard.RZKEY.RZKEY_W,
+(int)Keyboard.RZKEY.RZKEY_A,
+(int)Keyboard.RZKEY.RZKEY_S,
+(int)Keyboard.RZKEY.RZKEY_D,
+(int)Keyboard.RZKEY.RZKEY_P,
+(int)Keyboard.RZKEY.RZKEY_M,
+(int)Keyboard.RZKEY.RZKEY_F1,
+};
         int color = ChromaAnimationAPI.GetRGB(0, 255, 0);
         ChromaAnimationAPI.SetKeysColorAllFramesName(baseLayer, keys, keys.Length, color);
         ChromaAnimationAPI.SetChromaCustomFlagName(baseLayer, true);
@@ -4749,14 +4748,14 @@ public class SampleApp : MonoBehaviour
         int color2 = ChromaAnimationAPI.GetRGB(64, 64, 64);
         ChromaAnimationAPI.MultiplyTargetColorLerpAllFramesName(baseLayer, color1, color2);
         int[] keys = {
-            (int)Keyboard.RZKEY.RZKEY_W,
-            (int)Keyboard.RZKEY.RZKEY_A,
-            (int)Keyboard.RZKEY.RZKEY_S,
-            (int)Keyboard.RZKEY.RZKEY_D,
-            (int)Keyboard.RZKEY.RZKEY_P,
-            (int)Keyboard.RZKEY.RZKEY_M,
-            (int)Keyboard.RZKEY.RZKEY_F1,
-        };
+(int)Keyboard.RZKEY.RZKEY_W,
+(int)Keyboard.RZKEY.RZKEY_A,
+(int)Keyboard.RZKEY.RZKEY_S,
+(int)Keyboard.RZKEY.RZKEY_D,
+(int)Keyboard.RZKEY.RZKEY_P,
+(int)Keyboard.RZKEY.RZKEY_M,
+(int)Keyboard.RZKEY.RZKEY_F1,
+};
         ChromaAnimationAPI.CopyKeysColorAllFramesName(layer2, baseLayer, keys, keys.Length);
         ChromaAnimationAPI.SetChromaCustomFlagName(baseLayer, true);
         ChromaAnimationAPI.SetChromaCustomColorAllFramesName(baseLayer);
@@ -4836,29 +4835,29 @@ public class SampleApp : MonoBehaviour
         int frameCount = 120;
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.1f, 64, 64, 64);
         int[] keys = {
-            (int)Keyboard.RZKEY.RZKEY_W,
-            (int)Keyboard.RZKEY.RZKEY_A,
-            (int)Keyboard.RZKEY.RZKEY_S,
-            (int)Keyboard.RZKEY.RZKEY_D,
-        };
+(int)Keyboard.RZKEY.RZKEY_W,
+(int)Keyboard.RZKEY.RZKEY_A,
+(int)Keyboard.RZKEY.RZKEY_S,
+(int)Keyboard.RZKEY.RZKEY_D,
+};
         ChromaAnimationAPI.SetKeysColorAllFramesRGBName(baseLayer, keys, keys.Length, 255, 255, 0);
         keys = new int[] {
-            (int)Keyboard.RZKEY.RZKEY_F1,
-            (int)Keyboard.RZKEY.RZKEY_F2,
-            (int)Keyboard.RZKEY.RZKEY_F3,
-            (int)Keyboard.RZKEY.RZKEY_F4,
-            (int)Keyboard.RZKEY.RZKEY_F5,
-            (int)Keyboard.RZKEY.RZKEY_F6,
-        };
+(int)Keyboard.RZKEY.RZKEY_F1,
+(int)Keyboard.RZKEY.RZKEY_F2,
+(int)Keyboard.RZKEY.RZKEY_F3,
+(int)Keyboard.RZKEY.RZKEY_F4,
+(int)Keyboard.RZKEY.RZKEY_F5,
+(int)Keyboard.RZKEY.RZKEY_F6,
+};
         float t = 0;
         float speed = 0.05f;
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             t += speed;
-            float hp = Mathf.Floor(Mathf.Cos(Mathf.PI / 2f + t));
+            float hp = Mathf.Abs(Mathf.Cos(Mathf.PI / 2.0f + t));
             for (int i = 0; i < keys.Length; ++i)
             {
-                int color = ChromaAnimationAPI.GetRGB(0, (int)Mathf.Floor(255 * (1 - hp)), 0);
+                int color = ChromaAnimationAPI.GetRGB(0, (int)(255 * (1 - hp)), 0);
                 if ((i + 1) / (float)(keys.Length + 1) < hp)
                 {
                     color = ChromaAnimationAPI.GetRGB(0, 255, 0);
@@ -4959,30 +4958,30 @@ public class SampleApp : MonoBehaviour
         int frameCount = 120;
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.1f, 64, 64, 64);
         int[] keys = {
-            (int)Keyboard.RZKEY.RZKEY_W,
-            (int)Keyboard.RZKEY.RZKEY_A,
-            (int)Keyboard.RZKEY.RZKEY_S,
-            (int)Keyboard.RZKEY.RZKEY_D,
-        };
+(int)Keyboard.RZKEY.RZKEY_W,
+(int)Keyboard.RZKEY.RZKEY_A,
+(int)Keyboard.RZKEY.RZKEY_S,
+(int)Keyboard.RZKEY.RZKEY_D,
+};
         ChromaAnimationAPI.SetKeysColorAllFramesRGBName(baseLayer, keys, keys.Length, 255, 0, 0);
         keys = new int[] {
-            (int)Keyboard.RZKEY.RZKEY_F7,
-            (int)Keyboard.RZKEY.RZKEY_F8,
-            (int)Keyboard.RZKEY.RZKEY_F9,
-            (int)Keyboard.RZKEY.RZKEY_F10,
-            (int)Keyboard.RZKEY.RZKEY_F11,
-            (int)Keyboard.RZKEY.RZKEY_F12,
-        };
+(int)Keyboard.RZKEY.RZKEY_F7,
+(int)Keyboard.RZKEY.RZKEY_F8,
+(int)Keyboard.RZKEY.RZKEY_F9,
+(int)Keyboard.RZKEY.RZKEY_F10,
+(int)Keyboard.RZKEY.RZKEY_F11,
+(int)Keyboard.RZKEY.RZKEY_F12,
+};
         float t = 0;
         float speed = 0.05f;
         for (int frameId = 0; frameId < frameCount; ++frameId)
         {
             t += speed;
-            float hp = Mathf.Floor(Mathf.Cos(Mathf.PI / 2f + t));
+            float hp = Mathf.Abs(Mathf.Cos(Mathf.PI / 2.0f + t));
             for (int i = 0; i < keys.Length; ++i)
             {
-                int color = ChromaAnimationAPI.GetRGB((int)Mathf.Floor(255 * (1 - hp)), (int)Mathf.Floor(255 * (1 - hp)), 0);
-                if ((i + 1) / (keys.Length + 1) < hp)
+                int color = ChromaAnimationAPI.GetRGB((int)(255 * (1 - hp)), (int)(255 * (1 - hp)), 0);
+                if ((i + 1) / (float)(keys.Length + 1) < hp)
                 {
                     color = ChromaAnimationAPI.GetRGB(255, 255, 0);
                 }
