@@ -4421,8 +4421,8 @@ public class SampleApp : MonoBehaviour
         ChromaAnimationAPI.MakeBlankFramesRGBName(baseLayer, frameCount, 0.033f, 64, 0, 64);
         int maxRow = ChromaAnimationAPI.GetMaxRow(ChromaAnimationAPI.Device2D.Keyboard);
         int maxColumn = ChromaAnimationAPI.GetMaxColumn(ChromaAnimationAPI.Device2D.Keyboard);
-        int startColumn = (int)(UnityEngine.Random.RandomRange(0, maxColumn)) % 22;
-        int startRow = (int)(UnityEngine.Random.RandomRange(0, maxRow)) % 6;
+        int startColumn = (int)(UnityEngine.Random.Range(0, maxColumn)) % 22;
+        int startRow = (int)(UnityEngine.Random.Range(0, maxRow)) % 6;
         int color = ChromaAnimationAPI.GetRGB(0, 255, 0);
         float radius = 0;
         float speed = 25 / (float)frameCount;
@@ -4543,15 +4543,15 @@ public class SampleApp : MonoBehaviour
         int maxRow = ChromaAnimationAPI.GetMaxRow(ChromaAnimationAPI.Device2D.Keyboard);
         int maxColumn = ChromaAnimationAPI.GetMaxColumn(ChromaAnimationAPI.Device2D.Keyboard);
         // pick first key
-        int pointAColumn = (int)(UnityEngine.Random.RandomRange(0, maxColumn)) % 22;
-        int pointARow = (int)(UnityEngine.Random.RandomRange(0, maxRow)) % 6;
+        int pointAColumn = (int)(UnityEngine.Random.Range(0, maxColumn)) % 22;
+        int pointARow = (int)(UnityEngine.Random.Range(0, maxRow)) % 6;
         // pick a different second key
         int pointBColumn;
         int pointBRow;
         do
         {
-            pointBColumn = (int)(UnityEngine.Random.RandomRange(0, maxColumn)) % 22;
-            pointBRow = (int)(UnityEngine.Random.RandomRange(0, maxRow)) % 6;
+            pointBColumn = (int)(UnityEngine.Random.Range(0, maxColumn)) % 22;
+            pointBRow = (int)(UnityEngine.Random.Range(0, maxRow)) % 6;
         } while (pointAColumn == pointBColumn && pointARow == pointBRow);
         int color = ChromaAnimationAPI.GetRGB(0, 255, 0);
         int frameIndex = 0;
@@ -4748,16 +4748,16 @@ public class SampleApp : MonoBehaviour
         int color1 = ChromaAnimationAPI.GetRGB(32, 32, 32);
         int color2 = ChromaAnimationAPI.GetRGB(64, 64, 64);
         ChromaAnimationAPI.MultiplyTargetColorLerpAllFramesName(baseLayer, color1, color2);
-        Keyboard.RZKEY[] keys = {
-            Keyboard.RZKEY.RZKEY_W,
-            Keyboard.RZKEY.RZKEY_A,
-            Keyboard.RZKEY.RZKEY_S,
-            Keyboard.RZKEY.RZKEY_D,
-            Keyboard.RZKEY.RZKEY_P,
-            Keyboard.RZKEY.RZKEY_M,
-            Keyboard.RZKEY.RZKEY_F1,
+        int[] keys = {
+            (int)Keyboard.RZKEY.RZKEY_W,
+            (int)Keyboard.RZKEY.RZKEY_A,
+            (int)Keyboard.RZKEY.RZKEY_S,
+            (int)Keyboard.RZKEY.RZKEY_D,
+            (int)Keyboard.RZKEY.RZKEY_P,
+            (int)Keyboard.RZKEY.RZKEY_M,
+            (int)Keyboard.RZKEY.RZKEY_F1,
         };
-        //ChromaAnimationAPI.CopyKeysColorAllFramesName(layer2, baseLayer, keys); //TODO: ADD
+        ChromaAnimationAPI.CopyKeysColorAllFramesName(layer2, baseLayer, keys, keys.Length);
         ChromaAnimationAPI.SetChromaCustomFlagName(baseLayer, true);
         ChromaAnimationAPI.SetChromaCustomColorAllFramesName(baseLayer);
         ChromaAnimationAPI.OverrideFrameDurationName(baseLayer, 0.033f);
@@ -4858,7 +4858,6 @@ public class SampleApp : MonoBehaviour
             float hp = Mathf.Floor(Mathf.Cos(Mathf.PI / 2f + t));
             for (int i = 0; i < keys.Length; ++i)
             {
-                float ratio = (i + 1) / (float)keys.Length;
                 int color = ChromaAnimationAPI.GetRGB(0, (int)Mathf.Floor(255 * (1 - hp)), 0);
                 if ((i + 1) / (float)(keys.Length + 1) < hp)
                 {
@@ -4982,7 +4981,6 @@ public class SampleApp : MonoBehaviour
             float hp = Mathf.Floor(Mathf.Cos(Mathf.PI / 2f + t));
             for (int i = 0; i < keys.Length; ++i)
             {
-                float ratio = (i + 1) / (float)keys.Length;
                 int color = ChromaAnimationAPI.GetRGB((int)Mathf.Floor(255 * (1 - hp)), (int)Mathf.Floor(255 * (1 - hp)), 0);
                 if ((i + 1) / (keys.Length + 1) < hp)
                 {
