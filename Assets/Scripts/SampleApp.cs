@@ -6,6 +6,8 @@ public class SampleApp : MonoBehaviour
     bool _mInitialized = false;
     int _mResult = 0;
 
+    const int MAX_SAMPLE_COUNT = 46;
+
     public void Start()
     {
         _mResult = ChromaAnimationAPI.Init();
@@ -442,6 +444,37 @@ public class SampleApp : MonoBehaviour
 
     private bool _mLastMouseLeftDown = false;
     private string _mLastButtonName = string.Empty;
+    private int _mGamepadIndex = -1;
+
+    private void Update()
+    {
+        // joy dpad up
+        if (Input.GetKeyUp(KeyCode.Joystick1Button12))
+        {
+            if (_mGamepadIndex > 0)
+            {
+                --_mGamepadIndex;
+                _mLastButtonName = GetEffectName(_mGamepadIndex);
+            }
+        }
+        // joy dpad down
+        else if (Input.GetKeyUp(KeyCode.Joystick1Button13))
+        {
+            if (_mGamepadIndex < MAX_SAMPLE_COUNT)
+            {
+                ++_mGamepadIndex;
+                _mLastButtonName = GetEffectName(_mGamepadIndex);
+            }
+        }
+        // joy button a
+        else if (Input.GetKeyUp(KeyCode.Joystick1Button0))
+        {
+            if (_mGamepadIndex >= 0 && _mGamepadIndex < MAX_SAMPLE_COUNT)
+            {
+                ExecuteItem(_mGamepadIndex);
+            }
+        }
+    }
 
     public void OnGUI()
     {
@@ -479,7 +512,7 @@ public class SampleApp : MonoBehaviour
                     {
                         const float height = 40;
 
-                        for (int index = 1; index <= 46; ++index)
+                        for (int index = 1; index <= MAX_SAMPLE_COUNT; ++index)
                         {
                             if (ShowHeader(index))
                             {
@@ -496,6 +529,15 @@ public class SampleApp : MonoBehaviour
                                 GUILayout.Label(string.Format("LEFT: {0}", Input.GetMouseButton(0) ? "DOWN" : "UP"));
                                 GUILayout.Label(string.Format("MIDDLE: {0}", Input.GetMouseButton(2) ? "DOWN" : "UP"));
                                 GUILayout.Label(string.Format("RIGHT: {0}", Input.GetMouseButton(1) ? "DOWN" : "UP"));
+
+                                GUILayout.Label(string.Format("JOY DPAD UP: {0}",
+                                    Input.GetKey(KeyCode.Joystick1Button12) ? "DOWN" : "UP"));
+
+                                GUILayout.Label(string.Format("JOY DPAD DOWN: {0}",
+                                    Input.GetKey(KeyCode.Joystick1Button13) ? "DOWN" : "UP"));
+
+                                GUILayout.Label(string.Format("JOY BUTTON A: {0}",
+                                    Input.GetKey(KeyCode.Joystick1Button0) ? "DOWN" : "UP"));
                             }
 
                             string buttonName = GetEffectName(index);
