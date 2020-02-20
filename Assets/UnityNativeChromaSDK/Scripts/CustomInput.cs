@@ -42,7 +42,7 @@ namespace ChromaSDK
                 if (SUCCESS == PluginGetAbsoluteCursorPosition(out x, out y, out z))
                 {
                     result.x = x;
-                    result.y = y;
+                    result.y = Screen.height - y; //invert
                     result.z = z;
                     return result;
                 }
