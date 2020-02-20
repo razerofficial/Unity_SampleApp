@@ -524,11 +524,11 @@ public class SampleApp : MonoBehaviour
                             {
                                 GUILayout.BeginHorizontal(GUILayout.Width(200));
                                 GUILayout.Label(string.Format("Mouse X: {0} Y: {1}", 
-                                    Input.mousePosition.x, Input.mousePosition.y));
+                                    CustomInput.mousePosition.x, CustomInput.mousePosition.y));
                                 GUILayout.EndHorizontal();
-                                GUILayout.Label(string.Format("LEFT: {0}", Input.GetMouseButton(0) ? "DOWN" : "UP"));
-                                GUILayout.Label(string.Format("MIDDLE: {0}", Input.GetMouseButton(2) ? "DOWN" : "UP"));
-                                GUILayout.Label(string.Format("RIGHT: {0}", Input.GetMouseButton(1) ? "DOWN" : "UP"));
+                                GUILayout.Label(string.Format("LEFT: {0}", CustomInput.GetMouseButton(0) ? "DOWN" : "UP"));
+                                GUILayout.Label(string.Format("MIDDLE: {0}", CustomInput.GetMouseButton(2) ? "DOWN" : "UP"));
+                                GUILayout.Label(string.Format("RIGHT: {0}", CustomInput.GetMouseButton(1) ? "DOWN" : "UP"));
 
                                 GUILayout.Label(string.Format("JOY DPAD UP: {0}",
                                     Input.GetKey(KeyCode.Joystick1Button12) ? "DOWN" : "UP"));
@@ -552,11 +552,11 @@ public class SampleApp : MonoBehaviour
                                 GUI.backgroundColor = oldColor;
                             }
                             Rect rect = GUILayoutUtility.GetLastRect();
-                            Vector3 pos = Input.mousePosition;
-                            pos.y = Screen.height - Input.mousePosition.y;
+                            Vector3 pos = CustomInput.mousePosition;
+                            pos.y = Screen.height - CustomInput.mousePosition.y;
                             if (rect.Contains(pos))
                             {
-                                if (Input.GetMouseButton(0))
+                                if (CustomInput.GetMouseButton(0))
                                 {
                                     _mLastMouseLeftDown = true;
                                 }
@@ -591,7 +591,7 @@ public class SampleApp : MonoBehaviour
             GUILayout.FlexibleSpace();
 
             // text mouse
-            GUI.Label(new Rect(Input.mousePosition.x, Screen.height - Input.mousePosition.y, 20, 20), "o");
+            GUI.Label(new Rect(CustomInput.mousePosition.x, Screen.height - CustomInput.mousePosition.y, 20, 20), "o");
         }
     }
 
