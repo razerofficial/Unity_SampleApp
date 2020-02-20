@@ -25,7 +25,7 @@ namespace ChromaSDK
 
     static CustomInput()
     {
-        if (SUCCESS == PluginInitializeCursor())
+        if (SUCCESS != PluginInitializeCursor())
         {
             Debug.LogError("Failed to initialize cursor!");
         }
@@ -37,19 +37,19 @@ namespace ChromaSDK
             get
             {
 #if UNITY_2017 && PLATFORM_XBOXONE && !UNITY_EDITOR
-            Vector3 result;
-            float x,y,z;
-            if (SUCCESS == PluginGetAbsoluteCursorPosition(out x, out y, out z))
-            {
-                result.x = x;
-                result.y = y;
-                result.z = z;
-                return result;
-            }
-            else
-            {
-                return Vector3.zero;
-            }
+                Vector3 result;
+                float x,y,z;
+                if (SUCCESS == PluginGetAbsoluteCursorPosition(out x, out y, out z))
+                {
+                    result.x = x;
+                    result.y = y;
+                    result.z = z;
+                    return result;
+                }
+                else
+                {
+                    return Vector3.zero;
+                }
 #else
                 return Input.mousePosition;
 #endif
@@ -59,12 +59,12 @@ namespace ChromaSDK
         public static bool GetMouseButton(int button)
         {
 #if UNITY_2017 && PLATFORM_XBOXONE && !UNITY_EDITOR
-        bool result;
-        if (SUCCESS == PluginGetCursorButton(button, out result))
-        {
-            return result;
-        }
-        return false;
+            bool result;
+            if (SUCCESS == PluginGetCursorButton(button, out result))
+            {
+                return result;
+            }
+            return false;
 #else
             return Input.GetMouseButton(button);
 #endif
