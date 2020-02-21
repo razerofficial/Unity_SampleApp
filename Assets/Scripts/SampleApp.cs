@@ -523,6 +523,10 @@ public class SampleApp : MonoBehaviour
                             if (index == 1)
                             {
                                 GUILayout.BeginHorizontal(GUILayout.Width(200));
+                                GUILayout.Label(string.Format("Screen W: {0} H: {1}",
+                                    Screen.width, Screen.height));
+                                GUILayout.EndHorizontal();
+                                GUILayout.BeginHorizontal(GUILayout.Width(200));
                                 GUILayout.Label(string.Format("Mouse X: {0} Y: {1}", 
                                     CustomInput.mousePosition.x, CustomInput.mousePosition.y));
                                 GUILayout.EndHorizontal();
