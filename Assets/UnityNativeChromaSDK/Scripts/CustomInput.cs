@@ -41,7 +41,7 @@ namespace ChromaSDK
                 float x,y,z;
                 if (SUCCESS == PluginGetAbsoluteCursorPosition(out x, out y, out z))
                 {
-                    if (Screen.width == 3840 && Screen.height == 2160) // Running 4k
+                    if (Screen.height > 1080) // Double when higher than 1080p
                     {
                         x *= 2;
                         y *= 2;
