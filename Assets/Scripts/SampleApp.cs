@@ -10,6 +10,8 @@ public class SampleApp : MonoBehaviour
 
     public void Start()
     {
+        ChromaAnimationAPI._sStreamingAssetPath = Application.streamingAssetsPath;
+
         ChromaSDK.APPINFOTYPE appInfo = new APPINFOTYPE();
         appInfo.Title = "Razer Chroma Unity Sample Application";
         appInfo.Description = "A sample application using Razer Chroma SDK";
