@@ -10,6 +10,7 @@ public class GameSample : MonoBehaviour
 
     public void Start()
     {
+        ChromaAnimationAPI._sStreamingAssetPath = Application.streamingAssetsPath;
         _mResult = ChromaAnimationAPI.Init();
         _mInitialized = true;
         switch (_mResult)
