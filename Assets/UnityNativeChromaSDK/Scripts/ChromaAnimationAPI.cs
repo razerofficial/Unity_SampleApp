@@ -241,11 +241,6 @@ namespace ChromaSDK
                     return false;
                 }
 
-                if (versionParts.Length < 3)
-                {
-                    return false;
-                }
-
                 int major;
                 if (!int.TryParse(versionParts[0], out major))
                 {
