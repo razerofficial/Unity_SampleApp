@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SampleApp : MonoBehaviour
 {
+    bool _mIsChromaSDKAvailable = false;
     bool _mInitialized = false;
     int _mResult = 0;
 
@@ -10,6 +11,14 @@ public class SampleApp : MonoBehaviour
 
     public void Start()
     {
+        // Check if the Synapse | Chroma Connect module is installed:
+        _mIsChromaSDKAvailable = ChromaAnimationAPI.IsChromaSDKAvailable();
+
+        if (!_mIsChromaSDKAvailable)
+        {
+            return; // Skip Chroma Initialization
+        }
+
         ChromaAnimationAPI._sStreamingAssetPath = Application.streamingAssetsPath;
 
         ChromaSDK.APPINFOTYPE appInfo = new APPINFOTYPE();
@@ -510,7 +519,27 @@ public class SampleApp : MonoBehaviour
         GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
         GUILayout.FlexibleSpace();
 
-        if (!_mInitialized)
+        if (!_mIsChromaSDKAvailable)
+        {
+            GUILayout.BeginVertical(GUILayout.Height(Screen.height));
+            GUILayout.FlexibleSpace();
+
+            GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("The ChromaSDK is not available.");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("Install the latest update for Razer Synapse and the Chroma Connect module to use the Chroma API.");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndVertical();
+        }
+        else if (!_mInitialized)
         {
             GUILayout.BeginVertical(GUILayout.Height(Screen.height));
             GUILayout.FlexibleSpace();
