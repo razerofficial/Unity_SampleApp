@@ -485,7 +485,7 @@ namespace ChromaSDK
                 return IntPtr.Zero;
             }
             FileInfo fi = new FileInfo(path);
-            byte[] array = ASCIIEncoding.ASCII.GetBytes(fi.FullName + "\0");
+            byte[] array = Encoding.Unicode.GetBytes(fi.FullName + "\0");
             IntPtr lpData = Marshal.AllocHGlobal(array.Length);
             Marshal.Copy(array, 0, lpData, array.Length);
             return lpData;
@@ -3350,23 +3350,6 @@ namespace ChromaSDK
 			return result;
 		}
 		/// <summary>
-		/// The editor dialog is a non-blocking modal window, this method returns true 
-		/// if the modal window is open, otherwise false.
-		/// </summary>
-		public static bool IsDialogOpen()
-		{
-			bool result = PluginIsDialogOpen();
-			return result;
-		}
-		/// <summary>
-		/// D suffix for limited data types.
-		/// </summary>
-		public static double IsDialogOpenD()
-		{
-			double result = PluginIsDialogOpenD();
-			return result;
-		}
-		/// <summary>
 		/// Returns true if the plugin has been initialized. Returns false if the plugin 
 		/// is uninitialized.
 		/// </summary>
@@ -4194,52 +4177,6 @@ namespace ChromaSDK
 			IntPtr lpName = GetIntPtr(pathName);
 			int result = PluginOpenAnimationFromMemory(data, lpName);
 			FreeIntPtr(lpName);
-			return result;
-		}
-		/// <summary>
-		/// Opens a `Chroma` animation file with the `.chroma` extension. Returns zero 
-		/// upon success. Returns -1 if there was a failure.
-		/// </summary>
-		public static int OpenEditorDialog(string path)
-		{
-			string pathPath = GetStreamingPath(path);
-			IntPtr lpPath = GetIntPtr(pathPath);
-			int result = PluginOpenEditorDialog(lpPath);
-			FreeIntPtr(lpPath);
-			return result;
-		}
-		/// <summary>
-		/// Open the named animation in the editor dialog and play the animation at 
-		/// start.
-		/// </summary>
-		public static int OpenEditorDialogAndPlay(string path)
-		{
-			string pathPath = GetStreamingPath(path);
-			IntPtr lpPath = GetIntPtr(pathPath);
-			int result = PluginOpenEditorDialogAndPlay(lpPath);
-			FreeIntPtr(lpPath);
-			return result;
-		}
-		/// <summary>
-		/// D suffix for limited data types.
-		/// </summary>
-		public static double OpenEditorDialogAndPlayD(string path)
-		{
-			string pathPath = GetStreamingPath(path);
-			IntPtr lpPath = GetIntPtr(pathPath);
-			double result = PluginOpenEditorDialogAndPlayD(lpPath);
-			FreeIntPtr(lpPath);
-			return result;
-		}
-		/// <summary>
-		/// D suffix for limited data types.
-		/// </summary>
-		public static double OpenEditorDialogD(string path)
-		{
-			string pathPath = GetStreamingPath(path);
-			IntPtr lpPath = GetIntPtr(pathPath);
-			double result = PluginOpenEditorDialogD(lpPath);
-			FreeIntPtr(lpPath);
 			return result;
 		}
 		/// <summary>
@@ -7613,19 +7550,6 @@ namespace ChromaSDK
 		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
 		private static extern double PluginIsAnimationPausedNameD(IntPtr path);
 		/// <summary>
-		/// The editor dialog is a non-blocking modal window, this method returns true 
-		/// if the modal window is open, otherwise false.
-		/// EXPORT_API bool PluginIsDialogOpen();
-		/// </summary>
-		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-		private static extern bool PluginIsDialogOpen();
-		/// <summary>
-		/// D suffix for limited data types.
-		/// EXPORT_API double PluginIsDialogOpenD();
-		/// </summary>
-		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-		private static extern double PluginIsDialogOpenD();
-		/// <summary>
 		/// Returns true if the plugin has been initialized. Returns false if the plugin 
 		/// is uninitialized.
 		/// EXPORT_API bool PluginIsInitialized();
@@ -8202,32 +8126,6 @@ namespace ChromaSDK
 		/// </summary>
 		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
 		private static extern int PluginOpenAnimationFromMemory(byte[] data, IntPtr name);
-		/// <summary>
-		/// Opens a `Chroma` animation file with the `.chroma` extension. Returns zero 
-		/// upon success. Returns -1 if there was a failure.
-		/// EXPORT_API int PluginOpenEditorDialog(const char* path);
-		/// </summary>
-		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-		private static extern int PluginOpenEditorDialog(IntPtr path);
-		/// <summary>
-		/// Open the named animation in the editor dialog and play the animation at 
-		/// start.
-		/// EXPORT_API int PluginOpenEditorDialogAndPlay(const char* path);
-		/// </summary>
-		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-		private static extern int PluginOpenEditorDialogAndPlay(IntPtr path);
-		/// <summary>
-		/// D suffix for limited data types.
-		/// EXPORT_API double PluginOpenEditorDialogAndPlayD(const char* path);
-		/// </summary>
-		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-		private static extern double PluginOpenEditorDialogAndPlayD(IntPtr path);
-		/// <summary>
-		/// D suffix for limited data types.
-		/// EXPORT_API double PluginOpenEditorDialogD(const char* path);
-		/// </summary>
-		[DllImport(DLL_NAME, CallingConvention = CallingConvention.Cdecl)]
-		private static extern double PluginOpenEditorDialogD(IntPtr path);
 		/// <summary>
 		/// Sets the `duration` for all grames in the `Chroma` animation to the `duration` 
 		/// parameter. Returns the animation id upon success. Returns -1 upon failure. 
