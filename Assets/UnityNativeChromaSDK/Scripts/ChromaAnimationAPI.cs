@@ -205,7 +205,7 @@ namespace ChromaSDK
 #else
     #if UNITY_3 || UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
         const string DLL_NAME = "CChromaEditorLibrary3";
-    #elif UNITY_64
+    #elif UNITY_64 || UNITY_EDITOR
         const string DLL_NAME = "CChromaEditorLibrary64";
     #else
         const string DLL_NAME = "CChromaEditorLibrary";
@@ -221,7 +221,7 @@ namespace ChromaSDK
             try
             {
                 String fileName;
-#if UNITY_64
+#if UNITY_64 || UNITY_EDITOR
                 fileName = @"C:\Program Files\Razer Chroma SDK\bin\RzChromaSDK64.dll";
 #else
                 fileName = @"C:\Program Files (x86)\Razer Chroma SDK\bin\RzChromaSDK.dll";
