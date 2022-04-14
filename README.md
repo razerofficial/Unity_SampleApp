@@ -39,11 +39,15 @@
 
 ## About ##
 
-The `Unity Sample App` is a C# sample project that shows the animations from the [Chroma Animation Guide](http://chroma.razer.com/ChromaGuide/).
+The [Scene_SampleApp.unity](Assets/Scenes/Scene_SampleApp.unity) scene shows the sample animations from the [Chroma Animation Guide](http://chroma.razer.com/ChromaGuide/).
 
 **Screenshot:**
 
 ![image_1](/images/image_1.png)
+
+The [Scene_SampleGameLoop.unity](Assets/Scenes/Scene_SampleGameLoop.unity) is a sample scene that shows how to dynamically set color effects directly through the API and while also playing several animations at the same time using various blending operations. This sample shows how to do Chroma effects without using premade Chroma animations.
+
+The [Scene_GameSample.unity](Assets/Scenes/Scene_GameSample.unity) is a template scene intended to work with the automated [Chroma Design Converter](https://github.com/razerofficial/ChromaDesignConverter) for quickly porting sample effects from HTML5 to Unity.
 
 <a name="api"></a>
 
