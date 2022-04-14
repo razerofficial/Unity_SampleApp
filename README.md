@@ -47,7 +47,15 @@ The [Assets/Scenes/Scene_SampleApp.unity](Assets/Scenes/Scene_SampleApp.unity) s
 
 The [Assets/Scenes/Scene_SampleGameLoop.unity](Assets/Scenes/Scene_SampleGameLoop.unity) scene shows how to dynamically set color effects directly through the API and while also playing several animations at the same time using various blending operations. This sample shows how to do Chroma effects without using premade Chroma animations. Chroma animations can be used as source color information when doing dynamic blending. The referenced sample script can be found at [Assets/Scripts/SampleGameLoop.cs](Assets/Scripts/SampleGameLoop.cs).
 
-The [Assets/Scenes/Scene_GameSample.unity](Assets/Scenes/Scene_GameSample.unity) scene is a template intended to work with the automated [Chroma Design Converter](https://github.com/razerofficial/ChromaDesignConverter) for quickly porting sample effects from HTML5 to Unity. The referenced sample script can be found at [Assets/Scripts/GameSample.cs](Assets/Scripts/GameSample.cs).
+**Screenshot:**
+
+![image_3](/images/image_3.png)
+
+The [Assets/Scenes/Scene_GameSample.unity](Assets/Scenes/Scene_GameSample.unity) scene is a template intended to work with the automated [Chroma Design Converter](https://github.com/razerofficial/ChromaDesignConverter) for quickly porting sample effects from HTML5 to Unity. The referenced sample script can be found at [Assets/Scripts/GameSample.cs](Assets/Scripts/GameSample.cs). Chroma Design samples are commonly created with 15 sample effects which is why the template has that many buttons to play the sample effects from the ported code. The Chroma Design Converter is not limited to just 15 sample effects and can generate more effect code from the input HTML5 script.
+
+**Screenshot:**
+
+![image_4](/images/image_4.png)
 
 <a name="api"></a>
 

@@ -7,17 +7,91 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-using DeviceType = ChromaSDK.ChromaAnimationAPI.DeviceType;
 using Device = ChromaSDK.ChromaAnimationAPI.Device;
 using Device1D = ChromaSDK.ChromaAnimationAPI.Device1D;
 using Device2D = ChromaSDK.ChromaAnimationAPI.Device2D;
+using DeviceType = ChromaSDK.ChromaAnimationAPI.DeviceType;
+using FChromaSDKDeviceFrameIndex = ChromaSDK.ChromaAnimationAPI.FChromaSDKDeviceFrameIndex;
+using FChromaSDKScene = ChromaSDK.ChromaAnimationAPI.FChromaSDKScene;
+using EChromaSDKSceneBlend = ChromaSDK.ChromaAnimationAPI.EChromaSDKSceneBlend;
+using FChromaSDKSceneEffect = ChromaSDK.ChromaAnimationAPI.FChromaSDKSceneEffect;
+using EChromaSDKSceneMode = ChromaSDK.ChromaAnimationAPI.EChromaSDKSceneMode;
 
 public class SampleGameLoop : MonoBehaviour
 {
+    private int _mResult = 0;
+
+    #region Streaming
+
+    bool _mSupportsStreaming = false;
+
+    string _mShortCode = ChromaSDK.Stream.Default.Shortcode;
+    byte _mLenShortCode = 0;
+
+    string _mStreamId = ChromaSDK.Stream.Default.StreamId;
+    byte _mLenStreamId = 0;
+
+    string _mStreamKey = ChromaSDK.Stream.Default.StreamKey;
+    byte _mLenStreamKey = 0;
+
+    string _mStreamFocus = ChromaSDK.Stream.Default.StreamFocus;
+    byte _mLenStreamFocus = 0;
+    string _mStreamFocusGuid = "UnitTest-" + Guid.NewGuid();
+
+    public string GetShortcode()
+    {
+        if (_mLenShortCode == 0)
+        {
+            return "NOT_SET";
+        }
+        else
+        {
+            return _mShortCode;
+        }
+    }
+
+    public string GetStreamId()
+    {
+        if (_mLenStreamId == 0)
+        {
+            return "NOT_SET";
+        }
+        else
+        {
+            return _mStreamId;
+        }
+    }
+
+    public string GetStreamKey()
+    {
+        if (_mLenStreamKey == 0)
+        {
+            return "NOT_SET";
+        }
+        else
+        {
+            return _mStreamKey;
+        }
+    }
+
+    public string GetStreamFocus()
+    {
+        if (_mLenStreamFocus == 0)
+        {
+            return "NOT_SET";
+        }
+        else
+        {
+            return _mStreamFocus;
+        }
+    }
+
+    #endregion
+
     private bool _mWaitForExit = true;
     private Thread _mThread = null;
     private bool _mHotkeys = true;
-    private bool _mAmmo = false;
+    private bool _mAmmo = true;
     private int _mIndexLandscape = -1;
     private int _mIndexFire = -1;
     private int _mIndexRainbow = -1;
@@ -38,43 +112,7 @@ public class SampleGameLoop : MonoBehaviour
 
 #endif
 
-    class DeviceFrameIndex
-    {
-        // Index corresponds to EChromaSDKDeviceEnum;
-        public int[] _mFrameIndex = new int[6];
-
-        public DeviceFrameIndex()
-        {
-            _mFrameIndex[(int)Device.ChromaLink] = 0;
-            _mFrameIndex[(int)Device.Headset] = 0;
-            _mFrameIndex[(int)Device.Keyboard] = 0;
-            _mFrameIndex[(int)Device.Keypad] = 0;
-            _mFrameIndex[(int)Device.Mouse] = 0;
-            _mFrameIndex[(int)Device.Mousepad] = 0;
-        }
-    }
-
-    class Effect
-    {
-        public string _mAnimation = "";
-        public bool _mState = false;
-        public int _mPrimaryColor = 0;
-        public int _mSecondaryColor = 0;
-        public int _mSpeed = 1;
-        public string _mBlend = "";
-        public string _mMode = "";
-
-        public DeviceFrameIndex _mFrameIndex = new DeviceFrameIndex();
-    }
-
-
-    class Scene
-    {
-        public List<Effect> _mEffects = new List<Effect>();
-    }
-
-
-    Scene _mScene = null;
+    FChromaSDKScene _mScene = null;
 
 
     int HIBYTE(int a)
@@ -338,7 +376,7 @@ public class SampleGameLoop : MonoBehaviour
     }
 
 
-    void BlendAnimation1D(Effect effect, DeviceFrameIndex deviceFrameIndex, int device, Device1D device1d, string animationName,
+    void BlendAnimation1D(FChromaSDKSceneEffect effect, FChromaSDKDeviceFrameIndex deviceFrameIndex, int device, Device1D device1d, string animationName,
         int[] colors, int[] tempColors)
     {
         int size = GetColorArraySize1D(device1d);
@@ -357,68 +395,65 @@ public class SampleGameLoop : MonoBehaviour
 
                 // BLEND
                 int color2;
-                if (effect._mBlend == "none")
+                switch (effect._mBlend)
                 {
-                    color2 = tempColor; //source
-                }
-                else if (effect._mBlend == "invert")
-                {
-                    if (tempColor != 0) //source
-                    {
-                        color2 = InvertColor(tempColor); //source inverted
-                    }
-                    else
-                    {
-                        color2 = 0;
-                    }
-                }
-                else if (effect._mBlend == "thresh")
-                {
-                    color2 = Thresh(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
-                }
-                else // if (effect._mBlend == "lerp") //default
-                {
-                    color2 = MultiplyNonZeroTargetColorLerp(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
+                    case EChromaSDKSceneBlend.SB_None:
+                        color2 = tempColor; //source
+                        break;
+                    case EChromaSDKSceneBlend.SB_Invert:
+                        if (tempColor != 0) //source
+                        {
+                            color2 = InvertColor(tempColor); //source inverted
+                        }
+                        else
+                        {
+                            color2 = 0;
+                        }
+                        break;
+                    case EChromaSDKSceneBlend.SB_Threshold:
+                        color2 = Thresh(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
+                        break;
+                    case EChromaSDKSceneBlend.SB_Lerp:
+                    default:
+                        color2 = MultiplyNonZeroTargetColorLerp(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
+                        break;
                 }
 
                 // MODE
-                if (effect._mMode == "max")
+                switch (effect._mMode)
                 {
-                    colors[i] = MaxColor(color1, color2);
-                }
-                else if (effect._mMode == "min")
-                {
-                    colors[i] = MinColor(color1, color2);
-                }
-                else if (effect._mMode == "average")
-                {
-                    colors[i] = AverageColor(color1, color2);
-                }
-                else if (effect._mMode == "multiply")
-                {
-                    colors[i] = MultiplyColor(color1, color2);
-                }
-                else if (effect._mMode == "add")
-                {
-                    colors[i] = AddColor(color1, color2);
-                }
-                else if (effect._mMode == "subtract")
-                {
-                    colors[i] = SubtractColor(color1, color2);
-                }
-                else // if (effect._mMode == "replace") //default
-                {
-                    if (color2 != 0)
-                    {
-                        colors[i] = color2;
-                    }
+                    case EChromaSDKSceneMode.SM_Max:
+                        colors[i] = MaxColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Min:
+                        colors[i] = MinColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Average:
+                        colors[i] = AverageColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Multiply:
+                        colors[i] = MultiplyColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Add:
+                        colors[i] = AddColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Subtract:
+                        colors[i] = SubtractColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Replace:
+                    default:
+                        if (color2 != 0)
+                        {
+                            colors[i] = color2;
+                        }
+                        break;
                 }
             }
             deviceFrameIndex._mFrameIndex[device] = (frameId + frameCount + effect._mSpeed) % frameCount;
         }
     }
 
-    void BlendAnimation2D(Effect effect, DeviceFrameIndex deviceFrameIndex, int device, Device2D device2D, string animationName,
+    void BlendAnimation2D(FChromaSDKSceneEffect effect, FChromaSDKDeviceFrameIndex deviceFrameIndex, int device, Device2D device2D, string animationName,
         int[] colors, int[] tempColors)
     {
         int size = GetColorArraySize2D(device2D);
@@ -437,68 +472,65 @@ public class SampleGameLoop : MonoBehaviour
 
                 // BLEND
                 int color2;
-                if (effect._mBlend == "none")
+                switch (effect._mBlend)
                 {
-                    color2 = tempColor; //source
-                }
-                else if (effect._mBlend == "invert")
-                {
-                    if (tempColor != 0) //source
-                    {
-                        color2 = InvertColor(tempColor); //source inverted
-                    }
-                    else
-                    {
-                        color2 = 0;
-                    }
-                }
-                else if (effect._mBlend == "thresh")
-                {
-                    color2 = Thresh(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
-                }
-                else // if (effect._mBlend == "lerp") //default
-                {
-                    color2 = MultiplyNonZeroTargetColorLerp(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
+                    case EChromaSDKSceneBlend.SB_None:
+                        color2 = tempColor; //source
+                        break;
+                    case EChromaSDKSceneBlend.SB_Invert:
+                        if (tempColor != 0) //source
+                        {
+                            color2 = InvertColor(tempColor); //source inverted
+                        }
+                        else
+                        {
+                            color2 = 0;
+                        }
+                        break;
+                    case EChromaSDKSceneBlend.SB_Threshold:
+                        color2 = Thresh(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
+                        break;
+                    case EChromaSDKSceneBlend.SB_Lerp:
+                    default:
+                        color2 = MultiplyNonZeroTargetColorLerp(effect._mPrimaryColor, effect._mSecondaryColor, tempColor); //source
+                        break;
                 }
 
                 // MODE
-                if (effect._mMode == "max")
+                switch (effect._mMode)
                 {
-                    colors[i] = MaxColor(color1, color2);
-                }
-                else if (effect._mMode == "min")
-                {
-                    colors[i] = MinColor(color1, color2);
-                }
-                else if (effect._mMode == "average")
-                {
-                    colors[i] = AverageColor(color1, color2);
-                }
-                else if (effect._mMode == "multiply")
-                {
-                    colors[i] = MultiplyColor(color1, color2);
-                }
-                else if (effect._mMode == "add")
-                {
-                    colors[i] = AddColor(color1, color2);
-                }
-                else if (effect._mMode == "subtract")
-                {
-                    colors[i] = SubtractColor(color1, color2);
-                }
-                else // if (effect._mMode == "replace") //default
-                {
-                    if (color2 != 0)
-                    {
-                        colors[i] = color2;
-                    }
+                    case EChromaSDKSceneMode.SM_Max:
+                        colors[i] = MaxColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Min:
+                        colors[i] = MinColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Average:
+                        colors[i] = AverageColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Multiply:
+                        colors[i] = MultiplyColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Add:
+                        colors[i] = AddColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Subtract:
+                        colors[i] = SubtractColor(color1, color2);
+                        break;
+                    case EChromaSDKSceneMode.SM_Replace:
+                    default:
+                        if (color2 != 0)
+                        {
+                            colors[i] = color2;
+                        }
+                        break;
                 }
             }
             deviceFrameIndex._mFrameIndex[device] = (frameId + frameCount + effect._mSpeed) % frameCount;
         }
     }
 
-    void BlendAnimations(Scene scene,
+    void BlendAnimations(FChromaSDKScene scene,
         int[] colorsChromaLink, int[] tempColorsChromaLink,
         int[] colorsHeadset, int[] tempColorsHeadset,
         int[] colorsKeyboard, int[] tempColorsKeyboard,
@@ -507,12 +539,12 @@ public class SampleGameLoop : MonoBehaviour
         int[] colorsMousepad, int[] tempColorsMousepad)
     {
         // blend active animations
-        List<Effect> effects = scene._mEffects;
-        foreach (Effect effect in effects)
+        List<FChromaSDKSceneEffect> effects = scene._mEffects;
+        foreach (FChromaSDKSceneEffect effect in effects)
         {
             if (effect._mState)
             {
-                DeviceFrameIndex deviceFrameIndex = effect._mFrameIndex;
+                FChromaSDKDeviceFrameIndex deviceFrameIndex = effect._mFrameIndex;
 
                 //iterate all device types
                 for (int d = (int)Device.ChromaLink; d < (int)Device.MAX; ++d)
@@ -553,6 +585,7 @@ public class SampleGameLoop : MonoBehaviour
     }
 
     #region Init/Uninit
+
     public IEnumerator Start()
     {
         ChromaAnimationAPI._sStreamingAssetPath = Application.streamingAssetsPath;
@@ -574,60 +607,61 @@ public class SampleGameLoop : MonoBehaviour
         //    ;
         appInfo.SupportedDevice = (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20);
         appInfo.Category = 1;
-        int result = ChromaAnimationAPI.InitSDK(ref appInfo);
-        switch (result)
+        _mResult = ChromaAnimationAPI.InitSDK(ref appInfo);
+        switch (_mResult)
         {
             case RazerErrors.RZRESULT_DLL_NOT_FOUND:
-                Debug.LogError(string.Format("Chroma DLL is not found! {0}", RazerErrors.GetResultString(result)));
+                Debug.LogError(string.Format("Chroma DLL is not found! {0}", RazerErrors.GetResultString(_mResult)));
                 yield break;
             case RazerErrors.RZRESULT_DLL_INVALID_SIGNATURE:
-                Debug.LogError(string.Format("Chroma DLL has an invalid signature! {0}", RazerErrors.GetResultString(result)));
+                Debug.LogError(string.Format("Chroma DLL has an invalid signature! {0}", RazerErrors.GetResultString(_mResult)));
                 yield break;
             case RazerErrors.RZRESULT_SUCCESS:
-                Debug.Log("ChromaSDK initialized!");
+                //Debug.Log("ChromaSDK initialized!");
+                _mSupportsStreaming = ChromaAnimationAPI.CoreStreamSupportsStreaming();
                 yield return new WaitForSeconds(0.1f);
                 break;
             default:
-                Debug.LogError(string.Format("Failed to initialize Chroma! {0}", RazerErrors.GetResultString(result)));
+                Debug.LogError(string.Format("Failed to initialize Chroma! {0}", RazerErrors.GetResultString(_mResult)));
                 yield break;
         }
 
         // setup scene
-        _mScene = new Scene();
+        _mScene = new FChromaSDKScene();
 
-        Effect effect = new Effect();
+        FChromaSDKSceneEffect effect = new FChromaSDKSceneEffect();
         effect._mAnimation = "Animations/Landscape";
         effect._mSpeed = 1;
-        effect._mBlend = "none";
+        effect._mBlend = EChromaSDKSceneBlend.SB_None;
         effect._mState = false;
-        effect._mMode = "replace";
+        effect._mMode = EChromaSDKSceneMode.SM_Replace;
         _mScene._mEffects.Add(effect);
         _mIndexLandscape = (int)_mScene._mEffects.Count - 1;
 
-        effect = new Effect();
+        effect = new FChromaSDKSceneEffect();
         effect._mAnimation = "Animations/Fire";
         effect._mSpeed = 1;
-        effect._mBlend = "none";
+        effect._mBlend = EChromaSDKSceneBlend.SB_None;
         effect._mState = false;
-        effect._mMode = "replace";
+        effect._mMode = EChromaSDKSceneMode.SM_Replace;
         _mScene._mEffects.Add(effect);
         _mIndexFire = (int)_mScene._mEffects.Count - 1;
 
-        effect = new Effect();
+        effect = new FChromaSDKSceneEffect();
         effect._mAnimation = "Animations/Rainbow";
         effect._mSpeed = 1;
-        effect._mBlend = "none";
-        effect._mState = false;
-        effect._mMode = "replace";
+        effect._mBlend = EChromaSDKSceneBlend.SB_None;
+        effect._mState = true;
+        effect._mMode = EChromaSDKSceneMode.SM_Replace;
         _mScene._mEffects.Add(effect);
         _mIndexRainbow = (int)_mScene._mEffects.Count - 1;
 
-        effect = new Effect();
+        effect = new FChromaSDKSceneEffect();
         effect._mAnimation = "Animations/Spiral";
         effect._mSpeed = 1;
-        effect._mBlend = "none";
+        effect._mBlend = EChromaSDKSceneBlend.SB_None;
         effect._mState = false;
-        effect._mMode = "replace";
+        effect._mMode = EChromaSDKSceneMode.SM_Replace;
         _mScene._mEffects.Add(effect);
         _mIndexSpiral = (int)_mScene._mEffects.Count - 1;
 
@@ -652,39 +686,177 @@ public class SampleGameLoop : MonoBehaviour
 
     private void OnGUI()
     {
-        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+        const float buttonHeight = 40;
 
-        GUILayout.FlexibleSpace();
-
-        GUILayout.BeginVertical(GUILayout.Height(Screen.height));
-
-        GUILayout.FlexibleSpace();
-
-        GUILayout.Label("Unity GAME LOOP CHROMA SAMPLE APP");
-        _mHotkeys = GUILayout.Toggle(_mHotkeys, "Toggle Hotkeys");
-        _mAmmo = GUILayout.Toggle(_mAmmo, "Ammo/Health");
-        if (_mIndexFire >= 0)
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width), GUILayout.Height(Screen.height));
         {
-            _mScene._mEffects[_mIndexFire]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexFire]._mState, "Fire Animation");
-        }
-        if (_mIndexLandscape >= 0)
-        {
-            _mScene._mEffects[_mIndexLandscape]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexLandscape]._mState, "Landscape Animation");
-        }
-        if (_mIndexRainbow >= 0)
-        {
-            _mScene._mEffects[_mIndexRainbow]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexRainbow]._mState, "Rainbow Animation");
-        }
-        if (_mIndexSpiral >= 0)
-        {
-            _mScene._mEffects[_mIndexSpiral]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexSpiral]._mState, "Spiral Animation");
-        }
+            GUILayout.FlexibleSpace();
+            GUILayout.BeginVertical();
+            {
+                GUILayout.FlexibleSpace();
 
-        GUILayout.FlexibleSpace();
+                // horizontal center title
+                GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+                {
+                    GUILayout.FlexibleSpace();
+                    GUILayout.Label("UNITY GAME LOOP CHROMA SAMPLE APP");
+                    GUILayout.FlexibleSpace();
+                }
+                GUILayout.EndHorizontal();
 
-        GUILayout.EndVertical();
+                // center sections
+                GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+                {
+                    GUILayout.FlexibleSpace();
 
-        GUILayout.FlexibleSpace();
+
+                    // streaming section
+                    GUILayout.BeginVertical(GUILayout.Width(300));
+                    {
+                        GUILayout.FlexibleSpace();
+
+                        #region Streaming
+
+                        if (_mSupportsStreaming)
+                        {
+                            GUILayout.Label("Streaming Info (SUPPORTED)");
+
+                            ChromaSDK.Stream.StreamStatusType status = ChromaAnimationAPI.CoreStreamGetStatus();
+                            GUILayout.Label(string.Format("Status: {0}", ChromaAnimationAPI.CoreStreamGetStatusString(status)));
+                            GUILayout.Label(string.Format("Shortcode: {0}", GetShortcode()));
+                            GUILayout.Label(string.Format("Stream Id: {0}", GetStreamId()));
+                            GUILayout.Label(string.Format("Stream Key: {0}", GetStreamKey()));
+                            GUILayout.Label(string.Format("Stream Focus: {0}", GetStreamFocus()));
+
+                            if (GUILayout.Button("Request Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                _mShortCode = ChromaSDK.Stream.Default.Shortcode;
+                                _mLenShortCode = 0;
+                                ChromaAnimationAPI.CoreStreamGetAuthShortcode(ref _mShortCode, out _mLenShortCode, "PC", "Unity Game Loop Sample App 好");
+                            }
+
+                            if (GUILayout.Button("Request StreamId", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                _mStreamId = ChromaSDK.Stream.Default.StreamId;
+                                _mLenStreamId = 0;
+                                ChromaAnimationAPI.CoreStreamGetId(_mShortCode, ref _mStreamId, out _mLenStreamId);
+                                if (_mLenStreamId > 0)
+                                {
+                                    _mStreamId = _mStreamId.Substring(0, _mLenStreamId);
+                                }
+                            }
+
+                            if (GUILayout.Button("Request StreamKey", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                _mStreamKey = ChromaSDK.Stream.Default.StreamKey;
+                                _mLenStreamKey = 0;
+                                ChromaAnimationAPI.CoreStreamGetKey(_mShortCode, ref _mStreamKey, out _mLenStreamKey);
+                                if (_mLenStreamId > 0)
+                                {
+                                    _mStreamKey = _mStreamKey.Substring(0, _mLenStreamKey);
+                                }
+                            }
+
+                            if (GUILayout.Button("Release Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                if (ChromaAnimationAPI.CoreStreamReleaseShortcode(_mShortCode))
+                                {
+                                    _mShortCode = ChromaSDK.Stream.Default.Shortcode;
+                                    _mLenShortCode = 0;
+                                }
+                            }
+
+                            if (GUILayout.Button("Broadcast", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                if (_mLenStreamId > 0 && _mLenStreamKey > 0)
+                                {
+                                    ChromaAnimationAPI.CoreStreamBroadcast(_mStreamId, _mStreamKey);
+                                }
+                            }
+
+                            if (GUILayout.Button("BroadcastEnd", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                ChromaAnimationAPI.CoreStreamBroadcastEnd();
+                            }
+
+                            if (GUILayout.Button("Watch", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                if (_mLenStreamId > 0)
+                                {
+                                    ChromaAnimationAPI.CoreStreamWatch(_mStreamId, 0);
+                                }
+                            }
+
+                            if (GUILayout.Button("WatchEnd", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                ChromaAnimationAPI.CoreStreamWatchEnd();
+                            }
+
+                            if (GUILayout.Button("GetFocus", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                _mStreamFocus = ChromaSDK.Stream.Default.StreamFocus;
+                                _mLenStreamFocus = 0;
+                                ChromaAnimationAPI.CoreStreamGetFocus(ref _mStreamFocus, out _mLenStreamFocus);
+                            }
+
+                            if (GUILayout.Button("SetFocus", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            {
+                                ChromaAnimationAPI.CoreStreamSetFocus(_mStreamFocusGuid);
+
+                                _mStreamFocus = ChromaSDK.Stream.Default.StreamFocus;
+                                _mLenStreamFocus = 0;
+                                ChromaAnimationAPI.CoreStreamGetFocus(ref _mStreamFocus, out _mLenStreamFocus);
+                            }
+                        }
+
+                        #endregion
+
+                        GUILayout.FlexibleSpace();
+                    }
+                    GUILayout.EndVertical();
+
+                    GUILayout.FlexibleSpace();
+
+                    // sample section
+                    GUILayout.BeginVertical();
+                    {
+                        GUILayout.FlexibleSpace();
+
+                        _mHotkeys = GUILayout.Toggle(_mHotkeys, "Toggle Hotkeys");
+                        _mAmmo = GUILayout.Toggle(_mAmmo, "Ammo/Health");
+                        if (_mIndexFire >= 0)
+                        {
+                            _mScene._mEffects[_mIndexFire]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexFire]._mState, "Fire Animation");
+                        }
+                        if (_mIndexLandscape >= 0)
+                        {
+                            _mScene._mEffects[_mIndexLandscape]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexLandscape]._mState, "Landscape Animation");
+                        }
+                        if (_mIndexRainbow >= 0)
+                        {
+                            _mScene._mEffects[_mIndexRainbow]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexRainbow]._mState, "Rainbow Animation");
+                        }
+                        if (_mIndexSpiral >= 0)
+                        {
+                            _mScene._mEffects[_mIndexSpiral]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexSpiral]._mState, "Spiral Animation");
+                        }
+
+                        GUILayout.FlexibleSpace();
+                    }
+                    GUILayout.EndVertical();
+
+                    GUILayout.FlexibleSpace();
+                }
+                GUILayout.EndHorizontal();
+
+            }
+
+            GUILayout.FlexibleSpace();
+            GUILayout.EndVertical();
+
+            GUILayout.FlexibleSpace();
+
+        }
 
         GUILayout.EndHorizontal();
     }
