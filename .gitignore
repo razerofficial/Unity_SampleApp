@@ -9,3 +9,5 @@ Assets/Plugins/XDKChromaEditorLibrary.dll
 Assets/Plugins/XDKChromaEditorLibrary.dll.meta
 Logs/
 Packages/
+Assembly-CSharp.pidb
+Unity_SampleApp.userprefs
