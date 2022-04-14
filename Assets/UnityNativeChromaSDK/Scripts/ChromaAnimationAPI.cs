@@ -283,7 +283,7 @@ namespace ChromaSDK
             }
             catch (Exception ex)
             {
-                Debug.LogErrorFormat("The ChromaSDK is not available! Exception={0}", ex);
+                Debug.LogError(String.Format("The ChromaSDK is not available! Exception={0}", ex));
             }
             return false;
         }
