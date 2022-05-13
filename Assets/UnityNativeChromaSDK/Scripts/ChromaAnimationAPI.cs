@@ -1899,7 +1899,7 @@ namespace ChromaSDK
         /// Retrieve the stream id after authorizing the shortcode. The authorization 
         /// window will expire in 5 minutes. Be sure to save the stream key before 
         /// the window expires.  platform: is the null terminated string that identifies 
-        /// the source of the stream: { GEFORCE_NOW, LUNA, STADIA, XBOX_GAME_PASS } 
+        /// the source of the stream: { GEFORCE_NOW, LUNA, STADIA, GAME_PASS } 
         /// StreamGetStatus() should return the READY status to use this method.
         /// </summary>
         public static void CoreStreamGetId(string shortcode, ref string streamId, out byte length)
@@ -3600,6 +3600,13 @@ namespace ChromaSDK
         {
             double result = PluginIsInitializedD();
             return result;
+        }
+        public static int UninitAPI()
+        {
+            UnloadLibrarySDK();
+            UnloadLibraryStreamingPlugin();
+
+            return 0;
         }
         /// <summary>
         /// If the method can be invoked the method returns true.
@@ -6986,7 +6993,7 @@ namespace ChromaSDK
         /// Retrieve the stream id after authorizing the shortcode. The authorization 
         /// window will expire in 5 minutes. Be sure to save the stream key before 
         /// the window expires.  platform: is the null terminated string that identifies 
-        /// the source of the stream: { GEFORCE_NOW, LUNA, STADIA, XBOX_GAME_PASS } 
+        /// the source of the stream: { GEFORCE_NOW, LUNA, STADIA, GAME_PASS } 
         /// StreamGetStatus() should return the READY status to use this method.
         /// EXPORT_API void PluginCoreStreamGetId(const char* shortcode, char* streamId, unsigned char* length);
         /// </summary>

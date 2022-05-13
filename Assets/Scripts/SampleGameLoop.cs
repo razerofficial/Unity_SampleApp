@@ -24,6 +24,7 @@ public class SampleGameLoop : MonoBehaviour
     #region Streaming
 
     bool _mSupportsStreaming = false;
+    byte _mPlatform = 0;
 
     string _mShortCode = ChromaSDK.Stream.Default.Shortcode;
     byte _mLenShortCode = 0;
@@ -677,9 +678,17 @@ public class SampleGameLoop : MonoBehaviour
             _mThread.Join();
             _mThread = null;
         }
-        ChromaAnimationAPI.StopAll();
-        ChromaAnimationAPI.CloseAll();
-        ChromaAnimationAPI.Uninit();
+        if (_mResult == RazerErrors.RZRESULT_SUCCESS)
+        {
+            ChromaAnimationAPI.StopAll();
+            ChromaAnimationAPI.CloseAll();
+            int result = ChromaAnimationAPI.Uninit();
+            ChromaAnimationAPI.UninitAPI();
+            if (result != RazerErrors.RZRESULT_SUCCESS)
+            {
+                Debug.LogError("Failed to uninitialize Chroma!");
+            }
+        }
     }
 
     #endregion
@@ -728,12 +737,60 @@ public class SampleGameLoop : MonoBehaviour
                             GUILayout.Label(string.Format("Stream Key: {0}", GetStreamKey()));
                             GUILayout.Label(string.Format("Stream Focus: {0}", GetStreamFocus()));
 
-                            if (GUILayout.Button("Request Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                            GUILayout.BeginHorizontal();
                             {
-                                _mShortCode = ChromaSDK.Stream.Default.Shortcode;
-                                _mLenShortCode = 0;
-                                ChromaAnimationAPI.CoreStreamGetAuthShortcode(ref _mShortCode, out _mLenShortCode, "PC", "Unity Game Loop Sample App 好");
+
+                                if (GUILayout.Button("Request Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                {
+                                    _mShortCode = ChromaSDK.Stream.Default.Shortcode;
+                                    _mLenShortCode = 0;
+                                    string strPlatform = "PC";
+                                    switch (_mPlatform)
+                                    {
+                                        case 0:
+                                            strPlatform = "PC";
+                                            break;
+                                        case 1:
+                                            strPlatform = "LUNA";
+                                            break;
+                                        case 2:
+                                            strPlatform = "GEFORCE_NOW";
+                                            break;
+                                        case 3:
+                                            strPlatform = "GAME_PASS";
+                                            break;
+                                    }
+                                    ChromaAnimationAPI.CoreStreamGetAuthShortcode(ref _mShortCode, out _mLenShortCode, strPlatform, "Unity Game Loop Sample App 好");
+                                }
+
+                                GUILayout.BeginVertical();
+                                {
+                                    if (GUILayout.Button("Switch Platform"))
+                                    {
+                                        _mPlatform = (byte)((_mPlatform + 1) % 4); //PC, AMAZON LUNA, MS GAME PASS, NVIDIA GFN
+                                    }
+
+                                    string labelShortcode = "Platform: ";
+                                    switch (_mPlatform)
+                                    {
+                                        case 0:
+                                            labelShortcode += "Windows PC (PC)";
+                                            break;
+                                        case 1:
+                                            labelShortcode += "Windows Cloud (LUNA)";
+                                            break;
+                                        case 2:
+                                            labelShortcode += "Windows Cloud (GEFORCE NOW)";
+                                            break;
+                                        case 3:
+                                            labelShortcode += "Windows Cloud (GAME PASS)";
+                                            break;
+                                    }
+                                    GUILayout.Label(labelShortcode, GUILayout.Width(150));
+                                }
+                                GUILayout.EndVertical();
                             }
+                            GUILayout.EndHorizontal();
 
                             if (GUILayout.Button("Request StreamId", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
                             {
