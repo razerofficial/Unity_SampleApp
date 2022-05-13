@@ -3603,9 +3603,10 @@ namespace ChromaSDK
         }
         public static int UninitAPI()
         {
+#if !UNITY_EDITOR
             UnloadLibrarySDK();
             UnloadLibraryStreamingPlugin();
-
+#endif
             return 0;
         }
         /// <summary>
