@@ -30,7 +30,17 @@ public class GameSample : MonoBehaviour
     }
     public void OnApplicationQuit()
     {
-        ChromaAnimationAPI.Uninit();
+        if (_mResult == RazerErrors.RZRESULT_SUCCESS)
+        {
+            ChromaAnimationAPI.StopAll();
+            ChromaAnimationAPI.CloseAll();
+            int result = ChromaAnimationAPI.Uninit();
+            ChromaAnimationAPI.UninitAPI();
+            if (result != RazerErrors.RZRESULT_SUCCESS)
+            {
+                Debug.LogError("Failed to uninitialize Chroma!");
+            }
+        }
     }
 
     private string GetEffectName(int index)
