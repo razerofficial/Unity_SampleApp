@@ -116,7 +116,7 @@ Win64BuildFolder\RzChromaStreamPlugin64.dll
 
 ## API Class
 
-The `ChromaAnimationAPI` class provides a wrapper for the Chroma Editor Library. The wrapper for the API can be found at [ChromaAnimationAPI.cs](ChromaAnimationAPI.cs).
+The `ChromaAnimationAPI` class provides a wrapper for the Chroma Editor Library. The wrapper for the API can be found at [Assets/UnityNativeChromaSDK/Scripts/ChromaAnimationAPI.cs](Assets/UnityNativeChromaSDK/Scripts/ChromaAnimationAPI.cs).
 
 <a name="initialization"></a>
 
