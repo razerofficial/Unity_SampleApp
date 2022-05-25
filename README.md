@@ -81,12 +81,23 @@ For `Windows PC` builds the `RzChromaSDK.dll` and `RzChromaStreamPlugin.dll` are
 **32-bit libraries**
 
 ```
-Win32BuildFolder\CChromaEditorLibrary.dll
+(Unity Editor 3.X)
+ProjectFolder\Assets\Plugins\CChromaEditorLibrary3.dll
+
+(Unity Editor 4.X or better)
+ProjectFolder\Assets\Plugins\x86\CChromaEditorLibrary.dll
+
+(Standalone 32-bit builds)
+ProjectFolder\Win32BuildFolder\CChromaEditorLibrary.dll
 ```
 
 **64-bit libraries**
 
 ```
+(Unity Editor 4.X or better)
+ProjectFolder\Assets\Plugins\x64\CChromaEditorLibrary64.dll
+
+(Standalone 64-bit builds)
 Win64BuildFolder\CChromaEditorLibrary64.dll
 ```
 
@@ -99,6 +110,7 @@ Win64BuildFolder\CChromaEditorLibrary64.dll
 **32-bit libraries**
 
 ```
+(Standalone 32-bit builds)
 Win32BuildFolder\CChromaEditorLibrary.dll
 Win32BuildFolder\RzChromaSDK.dll
 Win32BuildFolder\RzChromaStreamPlugin.dll
@@ -107,6 +119,7 @@ Win32BuildFolder\RzChromaStreamPlugin.dll
 **64-bit libraries**
 
 ```
+(Standalone 64-bit builds)
 Win64BuildFolder\CChromaEditorLibrary64.dll
 Win64BuildFolder\RzChromaSDK64.dll
 Win64BuildFolder\RzChromaStreamPlugin64.dll
