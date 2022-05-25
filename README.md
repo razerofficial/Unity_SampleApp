@@ -161,7 +161,7 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
   int result = ChromaAnimationAPI.InitSDK(ref appInfo);
   if (result != RazerErrors.RZRESULT_SUCCESS)
   {
-    Console.Error.WriteLine("Failed to initialize Chroma SDK with error={0}\r\n", result);
+    Debug.LogError(String.Format("Failed to initialize Chroma SDK with error={0}\r\n", result));
 
     // avoid making Chroma API calls after a non-zero init result
     return;
