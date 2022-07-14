@@ -72,6 +72,10 @@ The `Chroma Editor Library` is a helper library for Chroma animation playback an
 
 The latest versions of the `Chroma Editor Library` can be found in [Releases](https://github.com/razerofficial/CChromaEditor/releases) for `Windows-PC` and `Windows-Cloud`.
 
+With recent Unity versions, be sure to inspect the native plugins and enable `Load on startup`. `Editor` and `Standalone` platforms are supported for 32-bit and 64-bit.
+
+![image_5](/images/image_5.png)
+
 <a name="windows-pc"></a>
 
 ## Windows PC
