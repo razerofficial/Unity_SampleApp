@@ -76,6 +76,10 @@ With recent Unity versions, be sure to inspect the native plugins and enable `Lo
 
 ![image_5](/images/image_5.png)
 
+Video: **Unity Chroma Animation Sample App - Streaming on Windows PC and Cloud**
+
+<a target="_blank" href="https://www.youtube.com/watch?v=3uCUjoXAxVo"><img src="https://img.youtube.com/vi/3uCUjoXAxVo/0.jpg"/></a>
+
 <a name="windows-pc"></a>
 
 ## Windows PC
