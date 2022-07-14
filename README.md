@@ -96,7 +96,7 @@ ProjectFolder\Assets\Plugins\CChromaEditorLibrary3.dll
 ProjectFolder\Assets\Plugins\x86\CChromaEditorLibrary.dll
 
 (Standalone 32-bit builds)
-ProjectFolder\Win32BuildFolder\CChromaEditorLibrary.dll
+Win32BuildFolder\Project_Data_Folder\Plugins\x86\CChromaEditorLibrary.dll
 ```
 
 **64-bit libraries**
@@ -106,7 +106,7 @@ ProjectFolder\Win32BuildFolder\CChromaEditorLibrary.dll
 ProjectFolder\Assets\Plugins\x64\CChromaEditorLibrary64.dll
 
 (Standalone 64-bit builds)
-Win64BuildFolder\CChromaEditorLibrary64.dll
+Win64BuildFolder\Project_Data_Folder\Plugins\x64\CChromaEditorLibrary64.dll
 ```
 
 <a name="windows-cloud"></a>
@@ -119,7 +119,7 @@ Win64BuildFolder\CChromaEditorLibrary64.dll
 
 ```
 (Standalone 32-bit builds)
-Win32BuildFolder\CChromaEditorLibrary.dll
+Win32BuildFolder\Project_Data_Folder\Plugins\x86\CChromaEditorLibrary.dll
 Win32BuildFolder\RzChromaSDK.dll
 Win32BuildFolder\RzChromaStreamPlugin.dll
 ```
@@ -128,7 +128,7 @@ Win32BuildFolder\RzChromaStreamPlugin.dll
 
 ```
 (Standalone 64-bit builds)
-Win64BuildFolder\CChromaEditorLibrary64.dll
+Win64BuildFolder\Project_Data_Folder\Plugins\x64\CChromaEditorLibrary64.dll
 Win64BuildFolder\RzChromaSDK64.dll
 Win64BuildFolder\RzChromaStreamPlugin64.dll
 ```
