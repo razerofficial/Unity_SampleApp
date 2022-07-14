@@ -19,6 +19,7 @@ using EChromaSDKSceneMode = ChromaSDK.ChromaAnimationAPI.EChromaSDKSceneMode;
 
 public class SampleGameLoop : MonoBehaviour
 {
+    private bool _mInitialized = false;
     private int _mResult = 0;
 
     #region Streaming
@@ -592,7 +593,7 @@ public class SampleGameLoop : MonoBehaviour
         ChromaAnimationAPI._sStreamingAssetPath = Application.streamingAssetsPath;
 
         ChromaSDK.APPINFOTYPE appInfo = new APPINFOTYPE();
-        appInfo.Title = "Razer Chroma CSharp Game Loop Sample Application";
+        appInfo.Title = "Razer Chroma Unity Game Loop Sample Application";
         appInfo.Description = "A sample application using Razer Chroma SDK";
 
         appInfo.Author_Name = "Razer";
@@ -612,18 +613,20 @@ public class SampleGameLoop : MonoBehaviour
         switch (_mResult)
         {
             case RazerErrors.RZRESULT_DLL_NOT_FOUND:
-                Debug.LogError(string.Format("Chroma DLL is not found! {0}", RazerErrors.GetResultString(_mResult)));
+                Debug.Log(string.Format("Chroma DLL is not found! {0}", RazerErrors.GetResultString(_mResult)));
                 yield break;
             case RazerErrors.RZRESULT_DLL_INVALID_SIGNATURE:
-                Debug.LogError(string.Format("Chroma DLL has an invalid signature! {0}", RazerErrors.GetResultString(_mResult)));
+                Debug.Log(string.Format("Chroma DLL has an invalid signature! {0}", RazerErrors.GetResultString(_mResult)));
                 yield break;
             case RazerErrors.RZRESULT_SUCCESS:
                 //Debug.Log("ChromaSDK initialized!");
+                _mInitialized = true;
                 _mSupportsStreaming = ChromaAnimationAPI.CoreStreamSupportsStreaming();
                 yield return new WaitForSeconds(0.1f);
                 break;
             default:
-                Debug.LogError(string.Format("Failed to initialize Chroma! {0}", RazerErrors.GetResultString(_mResult)));
+                // If Chroma is not supported on the system, just avoid making further calls to the API until next time
+                Debug.Log(string.Format("Failed to initialize Chroma! {0}", RazerErrors.GetResultString(_mResult)));
                 yield break;
         }
 
@@ -678,12 +681,15 @@ public class SampleGameLoop : MonoBehaviour
             _mThread.Join();
             _mThread = null;
         }
+
         if (_mResult == RazerErrors.RZRESULT_SUCCESS)
         {
             ChromaAnimationAPI.StopAll();
             ChromaAnimationAPI.CloseAll();
             int result = ChromaAnimationAPI.Uninit();
+#if !UNITY_EDITOR
             ChromaAnimationAPI.UninitAPI();
+#endif
             if (result != RazerErrors.RZRESULT_SUCCESS)
             {
                 Debug.LogError("Failed to uninitialize Chroma!");
@@ -695,227 +701,277 @@ public class SampleGameLoop : MonoBehaviour
 
     private void OnGUI()
     {
-        const float buttonHeight = 40;
+        GUILayout.FlexibleSpace();
+        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+        GUILayout.FlexibleSpace();
 
-        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width), GUILayout.Height(Screen.height));
+        if (!_mInitialized)
         {
+            GUILayout.BeginVertical(GUILayout.Height(Screen.height));
             GUILayout.FlexibleSpace();
-            GUILayout.BeginVertical();
+            GUILayout.Label("Chroma SDK has not initialized or may not be present!");
+            GUILayout.FlexibleSpace();
+            GUILayout.EndVertical();
+        }
+        else
+        {
+            switch (_mResult)
             {
-                GUILayout.FlexibleSpace();
-
-                // horizontal center title
-                GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
-                {
+                case RazerErrors.RZRESULT_DLL_NOT_FOUND:
+                    GUILayout.BeginVertical(GUILayout.Height(Screen.height));
                     GUILayout.FlexibleSpace();
-                    GUILayout.Label("UNITY GAME LOOP CHROMA SAMPLE APP");
+                    GUILayout.Label("Chroma DLL is not found!");
                     GUILayout.FlexibleSpace();
-                }
-                GUILayout.EndHorizontal();
-
-                // center sections
-                GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
-                {
-                    GUILayout.FlexibleSpace();
-
-
-                    // streaming section
-                    GUILayout.BeginVertical(GUILayout.Width(300));
-                    {
-                        GUILayout.FlexibleSpace();
-
-                        #region Streaming
-
-                        if (_mSupportsStreaming)
-                        {
-                            GUILayout.Label("Streaming Info (SUPPORTED)");
-
-                            ChromaSDK.Stream.StreamStatusType status = ChromaAnimationAPI.CoreStreamGetStatus();
-                            GUILayout.Label(string.Format("Status: {0}", ChromaAnimationAPI.CoreStreamGetStatusString(status)));
-                            GUILayout.Label(string.Format("Shortcode: {0}", GetShortcode()));
-                            GUILayout.Label(string.Format("Stream Id: {0}", GetStreamId()));
-                            GUILayout.Label(string.Format("Stream Key: {0}", GetStreamKey()));
-                            GUILayout.Label(string.Format("Stream Focus: {0}", GetStreamFocus()));
-
-                            GUILayout.BeginHorizontal();
-                            {
-
-                                if (GUILayout.Button("Request Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                                {
-                                    _mShortCode = ChromaSDK.Stream.Default.Shortcode;
-                                    _mLenShortCode = 0;
-                                    string strPlatform = "PC";
-                                    switch (_mPlatform)
-                                    {
-                                        case 0:
-                                            strPlatform = "PC";
-                                            break;
-                                        case 1:
-                                            strPlatform = "LUNA";
-                                            break;
-                                        case 2:
-                                            strPlatform = "GEFORCE_NOW";
-                                            break;
-                                        case 3:
-                                            strPlatform = "GAME_PASS";
-                                            break;
-                                    }
-                                    ChromaAnimationAPI.CoreStreamGetAuthShortcode(ref _mShortCode, out _mLenShortCode, strPlatform, "Unity Game Loop Sample App 好");
-                                }
-
-                                GUILayout.BeginVertical();
-                                {
-                                    if (GUILayout.Button("Switch Platform"))
-                                    {
-                                        _mPlatform = (byte)((_mPlatform + 1) % 4); //PC, AMAZON LUNA, MS GAME PASS, NVIDIA GFN
-                                    }
-
-                                    string labelShortcode = "Platform: ";
-                                    switch (_mPlatform)
-                                    {
-                                        case 0:
-                                            labelShortcode += "Windows PC (PC)";
-                                            break;
-                                        case 1:
-                                            labelShortcode += "Windows Cloud (LUNA)";
-                                            break;
-                                        case 2:
-                                            labelShortcode += "Windows Cloud (GEFORCE NOW)";
-                                            break;
-                                        case 3:
-                                            labelShortcode += "Windows Cloud (GAME PASS)";
-                                            break;
-                                    }
-                                    GUILayout.Label(labelShortcode, GUILayout.Width(150));
-                                }
-                                GUILayout.EndVertical();
-                            }
-                            GUILayout.EndHorizontal();
-
-                            if (GUILayout.Button("Request StreamId", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                _mStreamId = ChromaSDK.Stream.Default.StreamId;
-                                _mLenStreamId = 0;
-                                ChromaAnimationAPI.CoreStreamGetId(_mShortCode, ref _mStreamId, out _mLenStreamId);
-                                if (_mLenStreamId > 0)
-                                {
-                                    _mStreamId = _mStreamId.Substring(0, _mLenStreamId);
-                                }
-                            }
-
-                            if (GUILayout.Button("Request StreamKey", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                _mStreamKey = ChromaSDK.Stream.Default.StreamKey;
-                                _mLenStreamKey = 0;
-                                ChromaAnimationAPI.CoreStreamGetKey(_mShortCode, ref _mStreamKey, out _mLenStreamKey);
-                                if (_mLenStreamId > 0)
-                                {
-                                    _mStreamKey = _mStreamKey.Substring(0, _mLenStreamKey);
-                                }
-                            }
-
-                            if (GUILayout.Button("Release Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                if (ChromaAnimationAPI.CoreStreamReleaseShortcode(_mShortCode))
-                                {
-                                    _mShortCode = ChromaSDK.Stream.Default.Shortcode;
-                                    _mLenShortCode = 0;
-                                }
-                            }
-
-                            if (GUILayout.Button("Broadcast", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                if (_mLenStreamId > 0 && _mLenStreamKey > 0)
-                                {
-                                    ChromaAnimationAPI.CoreStreamBroadcast(_mStreamId, _mStreamKey);
-                                }
-                            }
-
-                            if (GUILayout.Button("BroadcastEnd", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                ChromaAnimationAPI.CoreStreamBroadcastEnd();
-                            }
-
-                            if (GUILayout.Button("Watch", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                if (_mLenStreamId > 0)
-                                {
-                                    ChromaAnimationAPI.CoreStreamWatch(_mStreamId, 0);
-                                }
-                            }
-
-                            if (GUILayout.Button("WatchEnd", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                ChromaAnimationAPI.CoreStreamWatchEnd();
-                            }
-
-                            if (GUILayout.Button("GetFocus", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                _mStreamFocus = ChromaSDK.Stream.Default.StreamFocus;
-                                _mLenStreamFocus = 0;
-                                ChromaAnimationAPI.CoreStreamGetFocus(ref _mStreamFocus, out _mLenStreamFocus);
-                            }
-
-                            if (GUILayout.Button("SetFocus", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
-                            {
-                                ChromaAnimationAPI.CoreStreamSetFocus(_mStreamFocusGuid);
-
-                                _mStreamFocus = ChromaSDK.Stream.Default.StreamFocus;
-                                _mLenStreamFocus = 0;
-                                ChromaAnimationAPI.CoreStreamGetFocus(ref _mStreamFocus, out _mLenStreamFocus);
-                            }
-                        }
-
-                        #endregion
-
-                        GUILayout.FlexibleSpace();
-                    }
                     GUILayout.EndVertical();
-
+                    break;
+                case RazerErrors.RZRESULT_DLL_INVALID_SIGNATURE:
+                    GUILayout.BeginVertical(GUILayout.Height(Screen.height));
                     GUILayout.FlexibleSpace();
-
-                    // sample section
-                    GUILayout.BeginVertical();
-                    {
-                        GUILayout.FlexibleSpace();
-
-                        _mHotkeys = GUILayout.Toggle(_mHotkeys, "Toggle Hotkeys");
-                        _mAmmo = GUILayout.Toggle(_mAmmo, "Ammo/Health");
-                        if (_mIndexFire >= 0)
-                        {
-                            _mScene._mEffects[_mIndexFire]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexFire]._mState, "Fire Animation");
-                        }
-                        if (_mIndexLandscape >= 0)
-                        {
-                            _mScene._mEffects[_mIndexLandscape]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexLandscape]._mState, "Landscape Animation");
-                        }
-                        if (_mIndexRainbow >= 0)
-                        {
-                            _mScene._mEffects[_mIndexRainbow]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexRainbow]._mState, "Rainbow Animation");
-                        }
-                        if (_mIndexSpiral >= 0)
-                        {
-                            _mScene._mEffects[_mIndexSpiral]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexSpiral]._mState, "Spiral Animation");
-                        }
-
-                        GUILayout.FlexibleSpace();
-                    }
+                    GUILayout.Label("Chroma DLL has an invalid signature!");
+                    GUILayout.FlexibleSpace();
                     GUILayout.EndVertical();
+                    break;
+                case RazerErrors.RZRESULT_SUCCESS:
+                    {
+                        const float buttonHeight = 40;
 
+                        GUILayout.BeginHorizontal(GUILayout.Width(Screen.width), GUILayout.Height(Screen.height));
+                        {
+                            GUILayout.FlexibleSpace();
+                            GUILayout.BeginVertical();
+                            {
+                                GUILayout.FlexibleSpace();
+
+                                // horizontal center title
+                                GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+                                {
+                                    GUILayout.FlexibleSpace();
+                                    GUILayout.Label("UNITY GAME LOOP CHROMA SAMPLE APP");
+                                    GUILayout.FlexibleSpace();
+                                }
+                                GUILayout.EndHorizontal();
+
+                                // center sections
+                                GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
+                                {
+                                    GUILayout.FlexibleSpace();
+
+
+                                    // streaming section
+                                    GUILayout.BeginVertical(GUILayout.Width(300));
+                                    {
+                                        GUILayout.FlexibleSpace();
+
+#region Streaming
+
+                                        if (_mSupportsStreaming)
+                                        {
+                                            GUILayout.Label("Streaming Info (SUPPORTED)");
+
+                                            ChromaSDK.Stream.StreamStatusType status = ChromaAnimationAPI.CoreStreamGetStatus();
+                                            GUILayout.Label(string.Format("Status: {0}", ChromaAnimationAPI.CoreStreamGetStatusString(status)));
+                                            GUILayout.Label(string.Format("Shortcode: {0}", GetShortcode()));
+                                            GUILayout.Label(string.Format("Stream Id: {0}", GetStreamId()));
+                                            GUILayout.Label(string.Format("Stream Key: {0}", GetStreamKey()));
+                                            GUILayout.Label(string.Format("Stream Focus: {0}", GetStreamFocus()));
+
+                                            GUILayout.BeginHorizontal();
+                                            {
+
+                                                if (GUILayout.Button("Request Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                                {
+                                                    _mShortCode = ChromaSDK.Stream.Default.Shortcode;
+                                                    _mLenShortCode = 0;
+                                                    string strPlatform = "PC";
+                                                    switch (_mPlatform)
+                                                    {
+                                                        case 0:
+                                                            strPlatform = "PC";
+                                                            break;
+                                                        case 1:
+                                                            strPlatform = "LUNA";
+                                                            break;
+                                                        case 2:
+                                                            strPlatform = "GEFORCE_NOW";
+                                                            break;
+                                                        case 3:
+                                                            strPlatform = "GAME_PASS";
+                                                            break;
+                                                    }
+                                                    ChromaAnimationAPI.CoreStreamGetAuthShortcode(ref _mShortCode, out _mLenShortCode, strPlatform, "Unity Game Loop Sample App 好");
+                                                }
+
+                                                GUILayout.BeginVertical();
+                                                {
+                                                    if (GUILayout.Button("Switch Platform"))
+                                                    {
+                                                        _mPlatform = (byte)((_mPlatform + 1) % 4); //PC, AMAZON LUNA, MS GAME PASS, NVIDIA GFN
+                                                    }
+
+                                                    string labelShortcode = "Platform: ";
+                                                    switch (_mPlatform)
+                                                    {
+                                                        case 0:
+                                                            labelShortcode += "Windows PC (PC)";
+                                                            break;
+                                                        case 1:
+                                                            labelShortcode += "Windows Cloud (LUNA)";
+                                                            break;
+                                                        case 2:
+                                                            labelShortcode += "Windows Cloud (GEFORCE NOW)";
+                                                            break;
+                                                        case 3:
+                                                            labelShortcode += "Windows Cloud (GAME PASS)";
+                                                            break;
+                                                    }
+                                                    GUILayout.Label(labelShortcode, GUILayout.Width(150));
+                                                }
+                                                GUILayout.EndVertical();
+                                            }
+                                            GUILayout.EndHorizontal();
+
+                                            if (GUILayout.Button("Request StreamId", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                _mStreamId = ChromaSDK.Stream.Default.StreamId;
+                                                _mLenStreamId = 0;
+                                                ChromaAnimationAPI.CoreStreamGetId(_mShortCode, ref _mStreamId, out _mLenStreamId);
+                                                if (_mLenStreamId > 0)
+                                                {
+                                                    _mStreamId = _mStreamId.Substring(0, _mLenStreamId);
+                                                }
+                                            }
+
+                                            if (GUILayout.Button("Request StreamKey", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                _mStreamKey = ChromaSDK.Stream.Default.StreamKey;
+                                                _mLenStreamKey = 0;
+                                                ChromaAnimationAPI.CoreStreamGetKey(_mShortCode, ref _mStreamKey, out _mLenStreamKey);
+                                                if (_mLenStreamId > 0)
+                                                {
+                                                    _mStreamKey = _mStreamKey.Substring(0, _mLenStreamKey);
+                                                }
+                                            }
+
+                                            if (GUILayout.Button("Release Shortcode", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                if (ChromaAnimationAPI.CoreStreamReleaseShortcode(_mShortCode))
+                                                {
+                                                    _mShortCode = ChromaSDK.Stream.Default.Shortcode;
+                                                    _mLenShortCode = 0;
+                                                }
+                                            }
+
+                                            if (GUILayout.Button("Broadcast", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                if (_mLenStreamId > 0 && _mLenStreamKey > 0)
+                                                {
+                                                    ChromaAnimationAPI.CoreStreamBroadcast(_mStreamId, _mStreamKey);
+                                                }
+                                            }
+
+                                            if (GUILayout.Button("BroadcastEnd", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                ChromaAnimationAPI.CoreStreamBroadcastEnd();
+                                            }
+
+                                            if (GUILayout.Button("Watch", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                if (_mLenStreamId > 0)
+                                                {
+                                                    ChromaAnimationAPI.CoreStreamWatch(_mStreamId, 0);
+                                                }
+                                            }
+
+                                            if (GUILayout.Button("WatchEnd", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                ChromaAnimationAPI.CoreStreamWatchEnd();
+                                            }
+
+                                            if (GUILayout.Button("GetFocus", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                _mStreamFocus = ChromaSDK.Stream.Default.StreamFocus;
+                                                _mLenStreamFocus = 0;
+                                                ChromaAnimationAPI.CoreStreamGetFocus(ref _mStreamFocus, out _mLenStreamFocus);
+                                            }
+
+                                            if (GUILayout.Button("SetFocus", GUILayout.Width(175), GUILayout.Height(buttonHeight)))
+                                            {
+                                                ChromaAnimationAPI.CoreStreamSetFocus(_mStreamFocusGuid);
+
+                                                _mStreamFocus = ChromaSDK.Stream.Default.StreamFocus;
+                                                _mLenStreamFocus = 0;
+                                                ChromaAnimationAPI.CoreStreamGetFocus(ref _mStreamFocus, out _mLenStreamFocus);
+                                            }
+                                        }
+
+#endregion
+
+                                        GUILayout.FlexibleSpace();
+                                    }
+                                    GUILayout.EndVertical();
+
+                                    GUILayout.FlexibleSpace();
+
+                                    // sample section
+                                    GUILayout.BeginVertical();
+                                    {
+                                        GUILayout.FlexibleSpace();
+
+                                        _mHotkeys = GUILayout.Toggle(_mHotkeys, "Toggle Hotkeys");
+                                        _mAmmo = GUILayout.Toggle(_mAmmo, "Ammo/Health");
+                                        if (_mIndexFire >= 0)
+                                        {
+                                            _mScene._mEffects[_mIndexFire]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexFire]._mState, "Fire Animation");
+                                        }
+                                        if (_mIndexLandscape >= 0)
+                                        {
+                                            _mScene._mEffects[_mIndexLandscape]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexLandscape]._mState, "Landscape Animation");
+                                        }
+                                        if (_mIndexRainbow >= 0)
+                                        {
+                                            _mScene._mEffects[_mIndexRainbow]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexRainbow]._mState, "Rainbow Animation");
+                                        }
+                                        if (_mIndexSpiral >= 0)
+                                        {
+                                            _mScene._mEffects[_mIndexSpiral]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexSpiral]._mState, "Spiral Animation");
+                                        }
+
+                                        GUILayout.FlexibleSpace();
+                                    }
+                                    GUILayout.EndVertical();
+
+                                    GUILayout.FlexibleSpace();
+                                }
+                                GUILayout.EndHorizontal();
+
+                            }
+
+                            GUILayout.FlexibleSpace();
+                            GUILayout.EndVertical();
+
+                            GUILayout.FlexibleSpace();
+
+                        }
+
+                        GUILayout.EndHorizontal();
+                    }
+                    break;
+                default:
+                    GUILayout.BeginVertical(GUILayout.Height(Screen.height));
                     GUILayout.FlexibleSpace();
-                }
-                GUILayout.EndHorizontal();
-
+                    GUILayout.Label(string.Format("Failed to initialize Chroma! {0}", RazerErrors.GetResultString(_mResult)));
+                    GUILayout.FlexibleSpace();
+                    GUILayout.EndVertical();
+                    break;
             }
 
             GUILayout.FlexibleSpace();
-            GUILayout.EndVertical();
-
+            GUILayout.EndHorizontal();
             GUILayout.FlexibleSpace();
 
+            // text mouse
+            GUI.Label(new Rect(CustomInput.mousePosition.x, Screen.height - CustomInput.mousePosition.y, 20, 20), "o");
         }
-
-        GUILayout.EndHorizontal();
     }
 
     public void GameLoop()
