@@ -80,6 +80,12 @@ public class GameSample : MonoBehaviour
 
     public IEnumerator Start()
     {
+        if (!ChromaAnimationAPI.IsChromaSDKAvailable())
+        {
+            _mResult = RazerErrors.RZRESULT_DLL_NOT_FOUND;
+            yield break;
+        }
+
         ChromaAnimationAPI._sStreamingAssetPath = Application.streamingAssetsPath;
 
         ChromaSDK.APPINFOTYPE appInfo = new APPINFOTYPE();
