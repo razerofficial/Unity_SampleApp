@@ -94,20 +94,22 @@ public class SampleGameLoop : MonoBehaviour
     private Thread _mThread = null;
     private bool _mHotkeys = true;
     private bool _mAmmo = true;
-    private int _mIndexLandscape = -1;
-    private int _mIndexFire = -1;
-    private int _mIndexRainbow = -1;
-    private int _mIndexSpiral = -1;
+    private bool _mExtended = true;
+    private int _mAmbientColor = 0;
+    private int _mIndexGradient1 = -1;
+    private int _mIndexGradient2 = -1;
+    private int _mIndexGradient3 = -1;
+    private int _mIndexGradient4 = -1;
     private int _mTimeMS = 0;
 
 #if !USE_ARRAY_EFFECTS
-
 
     // This final animation will have a single frame
     // Any color changes will immediately display in the next frame update.
     string ANIMATION_FINAL_CHROMA_LINK = "Dynamic\\Final_ChromaLink.chroma";
     string ANIMATION_FINAL_HEADSET = "Dynamic\\Final_Headset.chroma";
     string ANIMATION_FINAL_KEYBOARD = "Dynamic\\Final_Keyboard.chroma";
+    string ANIMATION_FINAL_KEYBOARD_EXTENDED = "Dynamic\\Final_KeyboardExtended.chroma";
     string ANIMATION_FINAL_KEYPAD = "Dynamic\\Final_Keypad.chroma";
     string ANIMATION_FINAL_MOUSE = "Dynamic\\Final_Mouse.chroma";
     string ANIMATION_FINAL_MOUSEPAD = "Dynamic\\Final_Mousepad.chroma";
@@ -135,9 +137,10 @@ public class SampleGameLoop : MonoBehaviour
 
     void SetKeyColor(int[] colors, int rzkey, int color)
     {
+        const int customFlag = 1 << 24;
         int row = HIBYTE(rzkey);
         int column = LOBYTE(rzkey);
-        colors[GetKeyColorIndex(row, column)] = color;
+        colors[GetKeyColorIndex(row, column)] = color | customFlag;
     }
 
     void SetKeyColorRGB(int[] colors, int rzkey, int red, int green, int blue)
@@ -168,7 +171,7 @@ public class SampleGameLoop : MonoBehaviour
             animationId = ChromaAnimationAPI.CreateAnimationInMemory((int)DeviceType.DE_1D, (int)device);
             ChromaAnimationAPI.CopyAnimation(animationId, path);
             ChromaAnimationAPI.CloseAnimation(animationId);
-            ChromaAnimationAPI.MakeBlankFramesName(path, 1, 0.1f, 0);
+            ChromaAnimationAPI.MakeBlankFramesName(path, 1, 0.033f, 0);
         }
     }
 
@@ -180,7 +183,7 @@ public class SampleGameLoop : MonoBehaviour
             animationId = ChromaAnimationAPI.CreateAnimationInMemory((int)DeviceType.DE_2D, (int)device);
             ChromaAnimationAPI.CopyAnimation(animationId, path);
             ChromaAnimationAPI.CloseAnimation(animationId);
-            ChromaAnimationAPI.MakeBlankFramesName(path, 1, 0.1f, 0);
+            ChromaAnimationAPI.MakeBlankFramesName(path, 1, 0.033f, 0);
         }
     }
 
@@ -388,8 +391,7 @@ public class SampleGameLoop : MonoBehaviour
         {
             //cout << animationName << ": " << (1 + frameId) << " of " << frameCount << endl;
             float duration;
-            int animationId = ChromaAnimationAPI.GetAnimation(animationName);
-            ChromaAnimationAPI.GetFrame(animationId, frameId, out duration, tempColors, size);
+            ChromaAnimationAPI.GetFrameName(animationName, frameId, out duration, tempColors, size, null, 0);
             for (int i = 0; i < size; ++i)
             {
                 int color1 = colors[i]; //target
@@ -465,8 +467,7 @@ public class SampleGameLoop : MonoBehaviour
         {
             //cout << animationName << ": " << (1 + frameId) << " of " << frameCount << endl;
             float duration;
-            int animationId = ChromaAnimationAPI.GetAnimation(animationName);
-            ChromaAnimationAPI.GetFrame(animationId, frameId, out duration, tempColors, size);
+            ChromaAnimationAPI.GetFrameName(animationName, frameId, out duration, tempColors, size, null, 0);
             for (int i = 0; i < size; ++i)
             {
                 int color1 = colors[i]; //target
@@ -536,6 +537,7 @@ public class SampleGameLoop : MonoBehaviour
         int[] colorsChromaLink, int[] tempColorsChromaLink,
         int[] colorsHeadset, int[] tempColorsHeadset,
         int[] colorsKeyboard, int[] tempColorsKeyboard,
+        int[] colorsKeyboardExtended, int[] tempColorsKeyboardExtended,
         int[] colorsKeypad, int[] tempColorsKeypad,
         int[] colorsMouse, int[] tempColorsMouse,
         int[] colorsMousepad, int[] tempColorsMousepad)
@@ -567,6 +569,10 @@ public class SampleGameLoop : MonoBehaviour
                             animationName += "_Keyboard.chroma";
                             BlendAnimation2D(effect, deviceFrameIndex, d, Device2D.Keyboard, animationName, colorsKeyboard, tempColorsKeyboard);
                             break;
+                        case Device.KeyboardExtended:
+                            animationName += "_KeyboardExtended.chroma";
+                            BlendAnimation2D(effect, deviceFrameIndex, d, Device2D.KeyboardExtended, animationName, colorsKeyboardExtended, tempColorsKeyboardExtended);
+                            break;
                         case Device.Keypad:
                             animationName += "_Keypad.chroma";
                             BlendAnimation2D(effect, deviceFrameIndex, d, Device2D.Keypad, animationName, colorsKeypad, tempColorsKeypad);
@@ -583,6 +589,14 @@ public class SampleGameLoop : MonoBehaviour
                 }
             }
 
+        }
+    }
+
+    public void SetStaticColor(int[] colors, int color)
+    {
+        for (int i = 0; i < colors.Length; ++i)
+        {
+            colors[i] = color;
         }
     }
 
@@ -639,41 +653,43 @@ public class SampleGameLoop : MonoBehaviour
         // setup scene
         _mScene = new FChromaSDKScene();
 
+        const int SPEED_MULTIPLIER = 3;
+
         FChromaSDKSceneEffect effect = new FChromaSDKSceneEffect();
-        effect._mAnimation = "Animations/Landscape";
-        effect._mSpeed = 1;
-        effect._mBlend = EChromaSDKSceneBlend.SB_None;
-        effect._mState = false;
-        effect._mMode = EChromaSDKSceneMode.SM_Replace;
-        _mScene._mEffects.Add(effect);
-        _mIndexLandscape = (int)_mScene._mEffects.Count - 1;
-
-        effect = new FChromaSDKSceneEffect();
-        effect._mAnimation = "Animations/Fire";
-        effect._mSpeed = 1;
-        effect._mBlend = EChromaSDKSceneBlend.SB_None;
-        effect._mState = false;
-        effect._mMode = EChromaSDKSceneMode.SM_Replace;
-        _mScene._mEffects.Add(effect);
-        _mIndexFire = (int)_mScene._mEffects.Count - 1;
-
-        effect = new FChromaSDKSceneEffect();
-        effect._mAnimation = "Animations/Rainbow";
-        effect._mSpeed = 1;
+        effect._mAnimation = "Animations/Gradient1";
+        effect._mSpeed = SPEED_MULTIPLIER;
         effect._mBlend = EChromaSDKSceneBlend.SB_None;
         effect._mState = true;
-        effect._mMode = EChromaSDKSceneMode.SM_Replace;
+        effect._mMode = EChromaSDKSceneMode.SM_Add;
         _mScene._mEffects.Add(effect);
-        _mIndexRainbow = (int)_mScene._mEffects.Count - 1;
+        _mIndexGradient1 = (int)_mScene._mEffects.Count - 1;
 
         effect = new FChromaSDKSceneEffect();
-        effect._mAnimation = "Animations/Spiral";
-        effect._mSpeed = 1;
+        effect._mAnimation = "Animations/Gradient2";
+        effect._mSpeed = SPEED_MULTIPLIER;
         effect._mBlend = EChromaSDKSceneBlend.SB_None;
         effect._mState = false;
-        effect._mMode = EChromaSDKSceneMode.SM_Replace;
+        effect._mMode = EChromaSDKSceneMode.SM_Add;
         _mScene._mEffects.Add(effect);
-        _mIndexSpiral = (int)_mScene._mEffects.Count - 1;
+        _mIndexGradient2 = (int)_mScene._mEffects.Count - 1;
+
+        effect = new FChromaSDKSceneEffect();
+        effect._mAnimation = "Animations/Gradient3";
+        effect._mSpeed = SPEED_MULTIPLIER;
+        effect._mBlend = EChromaSDKSceneBlend.SB_None;
+        effect._mState = false;
+        effect._mMode = EChromaSDKSceneMode.SM_Add;
+        _mScene._mEffects.Add(effect);
+        _mIndexGradient3 = (int)_mScene._mEffects.Count - 1;
+
+        effect = new FChromaSDKSceneEffect();
+        effect._mAnimation = "Animations/Gradient4";
+        effect._mSpeed = SPEED_MULTIPLIER;
+        effect._mBlend = EChromaSDKSceneBlend.SB_None;
+        effect._mState = false;
+        effect._mMode = EChromaSDKSceneMode.SM_Add;
+        _mScene._mEffects.Add(effect);
+        _mIndexGradient4 = (int)_mScene._mEffects.Count - 1;
 
         ThreadStart ts = new ThreadStart(GameLoop);
         _mThread = new Thread(ts);
@@ -752,7 +768,7 @@ public class SampleGameLoop : MonoBehaviour
                                 GUILayout.BeginHorizontal(GUILayout.Width(Screen.width));
                                 {
                                     GUILayout.FlexibleSpace();
-                                    GUILayout.Label("UNITY GAME LOOP CHROMA SAMPLE APP");
+                                    GUILayout.Label("CHROMA GAME LOOP SAMPLE");
                                     GUILayout.FlexibleSpace();
                                 }
                                 GUILayout.EndHorizontal();
@@ -768,7 +784,7 @@ public class SampleGameLoop : MonoBehaviour
                                     {
                                         GUILayout.FlexibleSpace();
 
-#region Streaming
+                                        #region Streaming
 
                                         if (_mSupportsStreaming)
                                         {
@@ -910,7 +926,7 @@ public class SampleGameLoop : MonoBehaviour
                                             }
                                         }
 
-#endregion
+                                        #endregion
 
                                         GUILayout.FlexibleSpace();
                                     }
@@ -924,22 +940,23 @@ public class SampleGameLoop : MonoBehaviour
                                         GUILayout.FlexibleSpace();
 
                                         _mHotkeys = GUILayout.Toggle(_mHotkeys, "Toggle Hotkeys");
+                                        _mExtended = GUILayout.Toggle(_mExtended, "Extended Keyboard");
                                         _mAmmo = GUILayout.Toggle(_mAmmo, "Ammo/Health");
-                                        if (_mIndexFire >= 0)
+                                        if (_mIndexGradient1 >= 0)
                                         {
-                                            _mScene._mEffects[_mIndexFire]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexFire]._mState, "Fire Animation");
+                                            _mScene._mEffects[_mIndexGradient1]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexGradient1]._mState, "Gradient 1");
                                         }
-                                        if (_mIndexLandscape >= 0)
+                                        if (_mIndexGradient2 >= 0)
                                         {
-                                            _mScene._mEffects[_mIndexLandscape]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexLandscape]._mState, "Landscape Animation");
+                                            _mScene._mEffects[_mIndexGradient2]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexGradient2]._mState, "Gradient 2");
                                         }
-                                        if (_mIndexRainbow >= 0)
+                                        if (_mIndexGradient3 >= 0)
                                         {
-                                            _mScene._mEffects[_mIndexRainbow]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexRainbow]._mState, "Rainbow Animation");
+                                            _mScene._mEffects[_mIndexGradient3]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexGradient3]._mState, "Gradient 3");
                                         }
-                                        if (_mIndexSpiral >= 0)
+                                        if (_mIndexGradient4 >= 0)
                                         {
-                                            _mScene._mEffects[_mIndexSpiral]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexSpiral]._mState, "Spiral Animation");
+                                            _mScene._mEffects[_mIndexGradient4]._mState = GUILayout.Toggle(_mScene._mEffects[_mIndexGradient4]._mState, "Gradient 4");
                                         }
 
                                         GUILayout.FlexibleSpace();
@@ -985,6 +1002,7 @@ public class SampleGameLoop : MonoBehaviour
         int sizeChromaLink = GetColorArraySize1D(Device1D.ChromaLink);
         int sizeHeadset = GetColorArraySize1D(Device1D.Headset);
         int sizeKeyboard = GetColorArraySize2D(Device2D.Keyboard);
+        int sizeKeyboardExtended = GetColorArraySize2D(Device2D.KeyboardExtended);
         int sizeKeypad = GetColorArraySize2D(Device2D.Keypad);
         int sizeMouse = GetColorArraySize2D(Device2D.Mouse);
         int sizeMousepad = GetColorArraySize1D(Device1D.Mousepad);
@@ -992,6 +1010,8 @@ public class SampleGameLoop : MonoBehaviour
         int[] colorsChromaLink = new int[sizeChromaLink];
         int[] colorsHeadset = new int[sizeHeadset];
         int[] colorsKeyboard = new int[sizeKeyboard];
+        int[] colorsKeyboardExtended = new int[sizeKeyboardExtended];
+        int[] colorsKeyboardKeys = new int[sizeKeyboard];
         int[] colorsKeypad = new int[sizeKeypad];
         int[] colorsMouse = new int[sizeMouse];
         int[] colorsMousepad = new int[sizeMousepad];
@@ -999,6 +1019,7 @@ public class SampleGameLoop : MonoBehaviour
         int[] tempColorsChromaLink = new int[sizeChromaLink];
         int[] tempColorsHeadset = new int[sizeHeadset];
         int[] tempColorsKeyboard = new int[sizeKeyboard];
+        int[] tempColorsKeyboardExtended = new int[sizeKeyboardExtended];
         int[] tempColorsKeypad = new int[sizeKeypad];
         int[] tempColorsMouse = new int[sizeMouse];
         int[] tempColorsMousepad = new int[sizeMousepad];
@@ -1006,18 +1027,36 @@ public class SampleGameLoop : MonoBehaviour
         while (_mWaitForExit)
         {
             // start with a blank frame
-            Array.Clear(colorsChromaLink, 0, sizeChromaLink);
-            Array.Clear(colorsHeadset, 0, sizeHeadset);
-            Array.Clear(colorsKeyboard, 0, sizeKeyboard);
-            Array.Clear(colorsKeypad, 0, sizeKeypad);
-            Array.Clear(colorsMouse, 0, sizeMouse);
-            Array.Clear(colorsMousepad, 0, sizeMousepad);
+            SetStaticColor(colorsChromaLink, _mAmbientColor);
+            SetStaticColor(colorsHeadset, _mAmbientColor);
+            if (_mExtended)
+            {
+                SetStaticColor(colorsKeyboardExtended, _mAmbientColor);
+            }
+            else
+            {
+                SetStaticColor(colorsKeyboard, _mAmbientColor);
+            }
+            SetStaticColor(colorsKeyboardKeys, _mAmbientColor);
+            SetStaticColor(colorsKeypad, _mAmbientColor);
+            SetStaticColor(colorsMouse, _mAmbientColor);
+            SetStaticColor(colorsMousepad, _mAmbientColor);
 
 #if !USE_ARRAY_EFFECTS
 
             SetupAnimation1D(ANIMATION_FINAL_CHROMA_LINK, Device1D.ChromaLink);
             SetupAnimation1D(ANIMATION_FINAL_HEADSET, Device1D.Headset);
-            SetupAnimation2D(ANIMATION_FINAL_KEYBOARD, Device2D.Keyboard);
+            if (_mExtended)
+            {
+                SetupAnimation2D(ANIMATION_FINAL_KEYBOARD_EXTENDED, Device2D.KeyboardExtended);
+                ChromaAnimationAPI.SetChromaCustomFlagName(ANIMATION_FINAL_KEYBOARD_EXTENDED, true);
+            }
+            else
+            {
+                SetupAnimation2D(ANIMATION_FINAL_KEYBOARD, Device2D.Keyboard);
+                ChromaAnimationAPI.SetChromaCustomFlagName(ANIMATION_FINAL_KEYBOARD, true);
+            }
+            
             SetupAnimation2D(ANIMATION_FINAL_KEYPAD, Device2D.Keypad);
             SetupAnimation2D(ANIMATION_FINAL_MOUSE, Device2D.Mouse);
             SetupAnimation1D(ANIMATION_FINAL_MOUSEPAD, Device1D.Mousepad);
@@ -1028,13 +1067,14 @@ public class SampleGameLoop : MonoBehaviour
                 colorsChromaLink, tempColorsChromaLink,
                 colorsHeadset, tempColorsHeadset,
                 colorsKeyboard, tempColorsKeyboard,
+                colorsKeyboardExtended, tempColorsKeyboardExtended,
                 colorsKeypad, tempColorsKeypad,
                 colorsMouse, tempColorsMouse,
                 colorsMousepad, tempColorsMousepad);
 
             if (_mAmmo)
             {
-                // SHow health animation
+                // Show health animation
                 {
                     int[] keys = {
                             (int)Keyboard.RZKEY.RZKEY_F1,
@@ -1060,7 +1100,7 @@ public class SampleGameLoop : MonoBehaviour
                             color = ChromaAnimationAPI.GetRGB(0, 100, 0);
                         }
                         int key = keys[i];
-                        SetKeyColor(colorsKeyboard, key, color);
+                        SetKeyColor(colorsKeyboardKeys, key, color);
                     }
                 }
 
@@ -1090,53 +1130,64 @@ public class SampleGameLoop : MonoBehaviour
                             color = ChromaAnimationAPI.GetRGB(100, 100, 0);
                         }
                         int key = keys[i];
-                        SetKeyColor(colorsKeyboard, key, color);
+                        SetKeyColor(colorsKeyboardKeys, key, color);
                     }
                 }
             }
 
             if (_mHotkeys)
             {
+                // Highlight if active
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_H, 0, 255, 0);
+
                 // Show hotkeys
-                SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_ESC, 255, 255, 0);
-                SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_W, 255, 0, 0);
-                SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_A, 255, 0, 0);
-                SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_S, 255, 0, 0);
-                SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_D, 255, 0, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_ESC, 255, 255, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_A, 255, 0, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_C, 255, 255, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_E, 255, 0, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_P, 255, 255, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_1, 255, 0, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_2, 255, 0, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_3, 255, 0, 0);
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_4, 255, 0, 0);
 
                 if (_mAmmo)
                 {
-                    SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_A, 0, 255, 0);
+                    SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_A, 0, 255, 0);
                 }
 
-                // Highlight R if rainbow is active
-                if (_mScene._mEffects[_mIndexRainbow]._mState)
+                if (_mExtended)
                 {
-                    SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_R, 0, 255, 0);
+                    SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_E, 0, 255, 0);
                 }
 
-                // Highlight S if spiral is active
-                if (_mScene._mEffects[_mIndexSpiral]._mState)
+                // Highlight if active
+                if (_mScene._mEffects[_mIndexGradient1]._mState)
                 {
-                    SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_S, 0, 255, 0);
+                    SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_1, 0, 255, 0);
                 }
 
-                // Highlight L if landscape is active
-                if (_mScene._mEffects[_mIndexLandscape]._mState)
+                // Highlight if active
+                if (_mScene._mEffects[_mIndexGradient2]._mState)
                 {
-                    SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_L, 0, 255, 0);
+                    SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_2, 0, 255, 0);
                 }
 
-                // Highlight L if landscape is active
-                if (_mScene._mEffects[_mIndexFire]._mState)
+                // Highlight if active
+                if (_mScene._mEffects[_mIndexGradient3]._mState)
                 {
-                    SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_F, 0, 255, 0);
+                    SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_3, 0, 255, 0);
                 }
 
-                if (_mHotkeys)
+                // Highlight if active
+                if (_mScene._mEffects[_mIndexGradient4]._mState)
                 {
-                    SetKeyColorRGB(colorsKeyboard, (int)Keyboard.RZKEY.RZKEY_H, 0, 255, 0);
+                    SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_4, 0, 255, 0);
                 }
+            }
+            else
+            {
+                SetKeyColorRGB(colorsKeyboardKeys, (int)Keyboard.RZKEY.RZKEY_H, 255, 0, 0);
             }
 
 #if USE_ARRAY_EFFECTS
@@ -1145,25 +1196,47 @@ public class SampleGameLoop : MonoBehaviour
             ChromaAnimationAPI.SetEffectCustom1D((int)Device1D.Headset, colorsHeadset);
             ChromaAnimationAPI.SetEffectCustom1D((int)Device1D.Mousepad, colorsMousepad);
 
-            ChromaAnimationAPI.SetCustomColorFlag2D((int)Device2D.Keyboard, colorsKeyboard);
-            ChromaAnimationAPI.SetEffectKeyboardCustom2D((int)Device2D.Keyboard, colorsKeyboard);
+            if (_mExtended)
+            {
+                ChromaAnimationAPI.SetCustomColorFlag2D((int)Device2D.KeyboardExtended, colorsKeyboardExtended);
+                ChromaAnimationAPI.SetEffectKeyboardCustom2D((int)Device2D.KeyboardExtended, colorsKeyboardExtended, colorsKeyboardKeys);
+            }
+            else
+            {
+                ChromaAnimationAPI.SetCustomColorFlag2D((int)Device2D.Keyboard, colorsKeyboard);
+                ChromaAnimationAPI.SetEffectKeyboardCustom2D((int)Device2D.Keyboard, colorsKeyboard, colorsKeyboardKeys);
+            }
 
             ChromaAnimationAPI.SetEffectCustom2D((int)Device2D.Keypad, colorsKeypad);
             ChromaAnimationAPI.SetEffectCustom2D((int)Device2D.Mouse, colorsMouse);
 
 #else
 
-            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_CHROMA_LINK, 0, 0.1f, colorsChromaLink, sizeChromaLink);
-            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_HEADSET, 0, 0.1f, colorsHeadset, sizeHeadset);
-            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_KEYBOARD, 0, 0.1f, colorsKeyboard, sizeKeyboard);
-            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_KEYPAD, 0, 0.1f, colorsKeypad, sizeKeypad);
-            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_MOUSE, 0, 0.1f, colorsMouse, sizeMouse);
-            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_MOUSEPAD, 0, 0.1f, colorsMousepad, sizeMousepad);
+            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_CHROMA_LINK, 0, 0.033f, colorsChromaLink, sizeChromaLink, null, 0);
+            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_HEADSET, 0, 0.033f, colorsHeadset, sizeHeadset, null, 0);
+            if (_mExtended)
+            {
+                ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_KEYBOARD_EXTENDED, 0, 0.033f, colorsKeyboardExtended, sizeKeyboardExtended, colorsKeyboardKeys, sizeKeyboard);
+            }
+            else
+            {
+                ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_KEYBOARD, 0, 0.033f, colorsKeyboard, sizeKeyboard, colorsKeyboardKeys, sizeKeyboard);
+            }
+            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_KEYPAD, 0, 0.033f, colorsKeypad, sizeKeypad, null, 0);
+            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_MOUSE, 0, 0.033f, colorsMouse, sizeMouse, null, 0);
+            ChromaAnimationAPI.UpdateFrameName(ANIMATION_FINAL_MOUSEPAD, 0, 0.033f, colorsMousepad, sizeMousepad, null, 0);
 
             // display the change
             ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_CHROMA_LINK, 0);
             ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_HEADSET, 0);
-            ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_KEYBOARD, 0);
+            if (_mExtended)
+            {
+                ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_KEYBOARD_EXTENDED, 0);
+            }
+            else
+            {
+                ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_KEYBOARD, 0);
+            }
             ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_KEYPAD, 0);
             ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_MOUSE, 0);
             ChromaAnimationAPI.PreviewFrameName(ANIMATION_FINAL_MOUSEPAD, 0);
