@@ -272,16 +272,15 @@ namespace ChromaSDK
                     return false;
                 }
 
-                System.Diagnostics.FileVersionInfo versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(fileName);
-                //Debug.LogFormat("ChromaSDK Version={0}", versionInfo.ProductVersion);
-                String productVersion = versionInfo.ProductVersion;
-                String[] versionParts = productVersion.Split(".".ToCharArray());
-                if (versionParts.Length < 3)
-                {
-                    return false;
-                }
+#if !ENABLE_IL2CPP
 
-                if (versionParts.Length < 3)
+                System.Diagnostics.FileVersionInfo versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(fileName);
+                
+                //Debug.Log(string.Format("ChromaSDK Version={0} File={1}", versionInfo.FileVersion, fileName));
+
+                String fileVersion = versionInfo.FileVersion;
+                String[] versionParts = fileVersion.Split(".".ToCharArray());
+                if (versionParts.Length < 4)
                 {
                     return false;
                 }
@@ -298,31 +297,47 @@ namespace ChromaSDK
                     return false;
                 }
 
+                int build;
+                if (!int.TryParse(versionParts[2], out build))
+                {
+                    return false;
+                }
+
                 int revision;
-                if (!int.TryParse(versionParts[2], out revision))
+                if (!int.TryParse(versionParts[3], out revision))
                 {
                     return false;
                 }
 
                 // Anything less than the min version returns false
+
+                // major, minor, build, revision ref: https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assemblyversionattribute.-ctor?source=recommendations&view=net-7.0
                 const int minMajor = 3;
-                const int minMinor = 20;
-                const int minRevision = 2;
+                const int minMinor = 8;
+                const int minBuild = 0;
+                const int minRevision = 154;
 
-                if (major < minMajor) // Less than 3.X.X
+                if (major < minMajor) // Less than minMajor
                 {
                     return false;
                 }
 
-                if (major == minMajor && minor < minMinor) // Less than 3.20
+                if (major == minMajor && minor < minMinor) // Less than minMinor
                 {
                     return false;
                 }
 
-                if (major == minMajor && minor == minMinor && revision < minRevision) // Less than 3.20.2
+                if (major == minMajor && minor == minMinor && build < minBuild) // Less than minBuild
                 {
                     return false;
                 }
+
+                if (major == minMajor && minor == minMinor && build == minBuild && revision < minRevision) // Less than minRevision
+                {
+                    return false;
+                }
+
+#endif
 
                 return true; // production version or better
             }
