@@ -249,6 +249,39 @@ namespace ChromaSDK
     #endif
 #endif
 
+#if ENABLE_IL2CPP
+
+		[DllImport("version.dll", CharSet = CharSet.Unicode)]
+		private static extern int GetFileVersionInfoSize(string lptstrFilename, out uint lpdwHandle);
+		[DllImport("version.dll", CharSet = CharSet.Unicode)]
+		private static extern bool GetFileVersionInfo(string lptstrFilename, uint dwHandle, uint dwLen, IntPtr lpData);
+		[DllImport("version.dll", CharSet = CharSet.Unicode)]
+		private static extern bool VerQueryValue(IntPtr pBlock, string lpSubBlock, out IntPtr lplpBuffer, out uint puLen);
+		public static string GetProductVersion(string filePath)
+		{
+			string fileVersion = null;
+			uint handle;
+			int size = GetFileVersionInfoSize(filePath, out handle);
+			if (size > 0)
+			{
+				IntPtr buffer = Marshal.AllocHGlobal(size);
+				if (GetFileVersionInfo(filePath, handle, (uint)size, buffer))
+				{
+					IntPtr pValue;
+					uint len;
+					if (VerQueryValue(buffer, "\\StringFileInfo\\040904b0\\FileVersion", out pValue, out len))
+					{
+						fileVersion = Marshal.PtrToStringUni(pValue);
+						Debug.Log("File Version: " + fileVersion);
+					}
+				}
+				Marshal.FreeHGlobal(buffer);
+			}
+			return fileVersion;
+		}
+
+#endif
+
         /// <summary>
         /// Check if the ChromaSDK DLL exists before calling API Methods
         /// </summary>
@@ -272,13 +305,15 @@ namespace ChromaSDK
                     return false;
                 }
 
-#if !ENABLE_IL2CPP
-
+#if ENABLE_IL2CPP
+				String fileVersion = GetProductVersion(fileName);
+#else
                 System.Diagnostics.FileVersionInfo versionInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(fileName);
                 
-                //Debug.Log(string.Format("ChromaSDK Version={0} File={1}", versionInfo.FileVersion, fileName));
 
                 String fileVersion = versionInfo.FileVersion;
+#endif
+                Debug.Log(string.Format("ChromaSDK Version={0} File={1}", fileVersion, fileName));
                 String[] versionParts = fileVersion.Split(".".ToCharArray());
                 if (versionParts.Length < 4)
                 {
@@ -336,8 +371,6 @@ namespace ChromaSDK
                 {
                     return false;
                 }
-
-#endif
 
                 return true; // production version or better
             }
