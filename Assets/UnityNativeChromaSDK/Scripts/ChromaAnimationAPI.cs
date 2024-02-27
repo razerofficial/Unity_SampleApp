@@ -272,7 +272,7 @@ namespace ChromaSDK
 					if (VerQueryValue(buffer, "\\StringFileInfo\\040904b0\\FileVersion", out pValue, out len))
 					{
 						fileVersion = Marshal.PtrToStringUni(pValue);
-						Debug.Log("File Version: " + fileVersion);
+						//Debug.Log("File Version: " + fileVersion);
 					}
 				}
 				Marshal.FreeHGlobal(buffer);
@@ -313,7 +313,7 @@ namespace ChromaSDK
 
                 String fileVersion = versionInfo.FileVersion;
 #endif
-                Debug.Log(string.Format("ChromaSDK Version={0} File={1}", fileVersion, fileName));
+                //Debug.Log(string.Format("ChromaSDK Version={0} File={1}", fileVersion, fileName));
                 String[] versionParts = fileVersion.Split(".".ToCharArray());
                 if (versionParts.Length < 4)
                 {
