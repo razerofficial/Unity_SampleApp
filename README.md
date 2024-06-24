@@ -8,37 +8,99 @@
 
 **Table of Contents**
 
-* [Quick Start](#quick-start)
 * [See Also](#see-also)
+* [Getting Started With Unity SDK](#getting-started-with-unity-sdk)
+* [User Privacy](#user-privacy)
+* [Dependencies](#dependencies)
+* [Requirements and Setup](#requirements-and-setup)
 * [About](#about)
 * [Chroma Editor Library](#chroma-editor-library)
 * [Windows PC](#windows-pc)
 * [Windows Cloud](#windows-cloud)
+* [SDK Integration](#sdk-integration)
+* [Chroma Design](#chroma-design)
+* [Revisions](#revisions)
+* [Sample Project](#sample-project)
+* [Tools](#tools)
+* [Integration](#integration)
+* [Testing](#testing)
+* [Haptic Design](#haptic-design)
+* [Modding](#modding)
+* [General](#general)
+* [Chroma Sensa](#chroma-sensa)
+* [Synesthesia](#synesthesia)
+* [Namespace](#namespace)
+* [Initialize SDK](#initialize-sdk)
+* [Is Active](#is-active)
+* [Is Connected](#is-connected)
+* [Play Chroma Animation](#play-chroma-animation)
+* [Set Event Name](#set-event-name)
+* [Use Forward Chroma Events](#use-forward-chroma-events)
+* [Microsoft Dynamic Lighting](#microsoft-dynamic-lighting)
 * [API Class](#api-class)
-* [Initialization](#initialization)
-* [API](#api)
+* [Full API](#full-api)
+
+# Getting Started With Unity SDK
+
+* This Chroma SDK plugin requires `Unity 2021.3.15f1` or higher.
 
 <a name="see-also"></a>
 
-## See Also ##
+## See Also
 
 **Docs:**
 
-* [Chroma Animation Guide](http://chroma.razer.com/ChromaGuide/) - Visual examples of the Chroma Animation API methods
+* [Chroma Animation Guide](http://chroma.razer.com/ChromaGuide/) - Visual examples of the Chroma animation API methods
 
 **Plugins:**
 
-* [CChromaEditor](https://github.com/RazerOfficial/CChromaEditor) - C++ native MFC library for playing and editing Chroma animations
+* [CChromaEditor](https://github.com/RazerOfficial/CChromaEditor) - C++ library for playing and editing Chroma animations
 
-## Quick Start ##
+<a name="user-privacy"></a>
 
-* Install [Synapse](https://www.razer.com/synapse-3)
+## User Privacy
 
-* Make sure the Chroma Connect module is installed.
+Note: The Chroma SDK requires only the minimum amount of information necessary to operate during initialization, including the title of the application or game, description of the application or game, application or game author, and application or game support contact information. This information is displayed in the Chroma app. The Chroma SDK does not monitor or collect any personal data related to users.
+
+<a name="dependencies"></a>
+
+## Dependencies
+
+To use the Chroma SDK first install the new [Razer Synapse and Chroma App](https://www.razer.com/synapse-new).
 
 ![image_2](images/image_2.png)
 
 * If you don't have Chroma hardware, you can see Chroma effects with the [Chroma Emulator](https://github.com/razerofficial/ChromaEmulator)
+
+## Requirements and Setup
+
+To import the Chroma SDK into Unity using the Unity Package Manager, follow these steps:
+
+1. Open the Unity Package Manager, then click the `+` button in the toolbar. Select `Add package from git URL` from the menu.
+
+![image_49](images/image_49.png)
+
+2. In the text box that appears, enter the URL [https://github.com/razerofficial/Unity_ChromaSDK.git](https://github.com/razerofficial/Unity_ChromaSDK.git) and click Add.
+
+If the installation is successful, the `Razer Chroma SDK` package will appear in the package list with the `git` tag.
+
+![image_50](images/image_50.png)
+
+The package includes samples scenes that download to the `Packages\RazerChromaSDK\Tests\Scenes` folder. Unfortunately, opening scenes in this folder causes a readonly error.
+
+![image_51](images/image_51.png)
+
+The `Packages\RazerChromaSDK\Editor\RazerChromaSDKMenu.cs` editor script adds a menuitem to setup the sample scenes and `StreamingAssets` sample Chroma animations. The `Assets->Razer ChromaSDK - Setup Sample Scenes` menu item will prepare assets automatically. This avoids the issue with packaged scenes showing the readonly package error.
+
+![image_42](images/image_42.png)
+
+After the menu item prepares assets, scenes will be added to `Assets/Scenes` and Chroma animations will be added to `Assets/StreamingAssets/Animations`.
+
+![image_44](images/image_44.png)
+
+Example scenes use `TextMesh Pro` so you may need to import `TMP Essentials` after opening a sample scene.
+
+![image_43](images/image_43.png)
 
 <a name="about"></a>
 
@@ -64,6 +126,10 @@ The [Assets/Scenes/Scene_GameSample.unity](Assets/Scenes/Scene_GameSample.unity)
 
 ---
 
+Video: **Unity Chroma Animation Sample App - Streaming on Windows PC and Cloud**
+
+<a target="_blank" href="https://www.youtube.com/watch?v=3uCUjoXAxVo"><img src="https://img.youtube.com/vi/3uCUjoXAxVo/0.jpg"/></a>
+
 <a name="chroma-editor-library"></a>
 
 ## Chroma Editor Library
@@ -74,7 +140,7 @@ The latest versions of the `Chroma Editor Library` can be found in [Releases](ht
 
 With recent Unity versions, be sure to inspect the native plugins and enable `Load on startup`. `Editor` and `Standalone` platforms are supported for 32-bit and 64-bit.
 
-![image_5](/images/image_5.png)
+![image_48](images/image_48.png)
 
 Video: **Unity Chroma Animation Sample App - Streaming on Windows PC and Cloud**
 
@@ -84,7 +150,7 @@ Video: **Unity Chroma Animation Sample App - Streaming on Windows PC and Cloud**
 
 ## Windows PC
 
-For `Windows PC` builds the `RzChromaSDK.dll` and `RzChromaStreamPlugin.dll` are not packaged with the build. These libraries are automatically updated and managed by Synapse and the Chroma Connect module. Avoid including these files in your build folder for `Windows PC` builds.
+For `Windows PC` builds the `RzChromatic.dll` and `RzChromaStreamPlugin.dll` are not packaged with the build. These libraries are automatically updated and managed by Synapse and the Chroma Connect module. Avoid including these files in your build folder for `Windows PC` builds.
 
 **32-bit libraries**
 
@@ -113,48 +179,245 @@ Win64BuildFolder\Project_Data_Folder\Plugins\x64\CChromaEditorLibrary64.dll
 
 ## Windows Cloud
 
-`Windows Cloud` builds run on cloud platforms using `Windows` such as `Amazon Luna`, `Microsoft Game Pass`, and `NVidia GeForce Now`. Game instances run in the cloud without direct access to Chroma hardware. By running the `Windows Cloud` version of the library `Chroma` effects can reach your local machine and connected hardware. Cloud instances won't have Synapse installed which requires special cloud versions of the libraries. The `Chroma Editor Library` uses the core `RzChromaSDK` low-level library to send Chroma effects to the cloud with the `RzChromaStreamPlugin` streaming library. Viewers can watch the cloud stream via the [Razer Stream Portal](https://stream.razer.com/).
+`Windows Cloud` builds run on cloud platforms using `Windows` such as `Amazon Luna`, `Microsoft Game Pass`, and `NVidia GeForce Now`. Game instances run in the cloud without direct access to Chroma hardware. Chroma effects stream across the Internet to reach your local machine and connected hardware. No extra code is required to add Cloud support. In the case with `NVidia GeForce Now`, the cloud runs the same Epic Games and Steam builds as the desktop version and support Chroma streaming. Viewers can watch the cloud stream via the [Razer Stream Portal](https://stream.razer.com/).
 
-**32-bit libraries**
+<a name="sdk-integration"></a>
+
+## SDK Integration
+
+The SDK integration process involves the following:
+
+1. [Chroma Design](#chroma-design)
+
+2. [Revisions](#revisions)
+
+3. [Sample Project](#sample-project)
+
+4. [Tools](#tools)
+
+5. [Integration](#integration)
+
+6. [Testing](#testing)
+
+7. [Haptic Design](#haptic-design)
+
+8. [Modding](#modding)
+
+<a name="chroma-design"></a>
+
+### Chroma Design
+
+The Chroma Design is the starting point. The team provides 15 sample effects that play on an animated web page. The sample effects correspond to short gameplay video clips and give an idea to the type of animation that could play for a set of game events. The samples are available to use for the specified effect or can be used for any other effect which is completely up to the developer. The developer may ask for effect revisions or additional sample effects. If gameplay video is not available, the developer can provide a description or reference art to conceptualize the desired effect.
+
+![image_9](images/image_9.png)
+
+<a name="revisions"></a>
+
+### Revisions
+
+Some Chroma Designs require revisions to add more requested effects or to make changes through the feedback of reviewing the Chroma Design. Revisions can be requested which result in a subset of alterations from the previous design or add completely new game events. **Fill out the [Chroma_Sensa_Template_Developers.xlsx Template](https://github.com/razerofficial/CChromaEditor/releases/tag/Templates) which provides all the necessary fields for making design requests and revisions.**
+
+<a name="sample-project"></a>
+
+### Sample Project
+
+The developer specifies which game engine is used by the game so that a sample project can be shared with sample code for the specified engine. The sample project will have the same effects that were defined in the Chroma Design and ported to the target language/game engine. The sample project will include a plugin to add the Chroma SDK to the specified game engine, and the ported sample code and sample animations from the `Chroma Design`.
+
+<a name="tools"></a>
+
+### Tools
+
+* The [Web Chroma Editor](https://chroma.razer.com/ChromaEditor/gradient/) creates Chroma animations and code snippets from several input sources. Designers can create Chroma animations without writing any code. The toolset can use input sources as video, text, camera, web cam, desktop capture, gradients, patterns, images, and blended animations.
+
+![image_10](images/image_10.png)
+
+* The [Chroma Design Converter](https://chroma.razer.com/ChromaDesignConverter/) can automatically port a web based Chroma Design to several languages and game engines.
+
+* The [Synesthesia Console](https://www.interhaptics.com/doc/chroma-sensa/#synesthesia) can generate haptic configurations automatically for your Chroma integration.
+
+<a name="integration"></a>
+
+### Integration
+
+The integration process can be as easy as copy and paste from the sample project into the game code. Most likely, it's a matter of finding game triggers in the game code to find the optimal place to add a call to `PlayAnimation()`. The typical Chroma integration process lasts 3 - 5 days for a single developer. Haptics integration can take 0 days by using automatic mode. Manually adding haptics can take about the same amount of work as Chroma to add the calls to `SetEventName()` in the right places. Chroma and haptics are independent meaning sometimes they play together and sometimes they play separately, which is completely up to the designer. **In most cases for game engines after the game build completes, the Chroma animations need to be copied to the animation folder within the game's content folder.**
+
+<a name="testing"></a>
+
+### Testing
+
+The team can provide QA on the game build when integration has completed. Steam beta keys and Epic Store beta keys make testing possible before a game launches. This can be a good way to provide design revisions by testing and giving feedback on the build. To support the QA process, it will be important to include a level selector and potentially console commands that make it easy to navigate the build to test the game triggers at the right moments to validate the visuals work as expected. Beta key access is limited to the engineering and QA review team.
+
+<a name="haptic-design"></a>
+
+### Haptic Design
+
+Just like Chroma Designs, the Haptic Design can be provided by the team. Adding haptic support does not require adding assets to the game. Haptics can be added to a game without code changes and after the game has released. Haptics can be added through creation of a haptic configuration file. Developers can use the [Synesthesia Console](https://www.interhaptics.com/doc/chroma-sensa/#synesthesia) which automates creation of the haptic configuration file within `HapticFolders` and will add some mockup haptic files (simple haptic effect which can be edited with [Haptic Composer](https://www.interhaptics.com/download/)) when event names follow a naming convention. Haptic configuration files are automatically distributed by the team through `Chroma App` updates.
+
+<a name="modding"></a>
+
+### Modding
+
+The decision to add Chroma mod support for a title is completely up to the developer. If the developer decides to block modding, Chroma animations can be loaded from a byte array which sandboxes and protects against any modifications to the Chroma animation assets. If the developer wants to use modding, Chroma animation assets are placed within the installation directory. Modders can modify the Chroma animations assets that are loaded by the title. The API provides `CloseAnimation` which reloads the Chroma animation from disk. This allows Chroma animations to be modified externally without needing to relaunch the title. Chroma animation playback also supports relative paths from the content folder. Relative paths can be used to organize several mods within the content folder. The title can have a configuration menu that switches between mod subfolder names which changes the relative path for loading the Chroma animations. The [C++ Chroma Mod Sample](https://github.com/razerofficial/CSDK_ChromaModSample) shows how relative paths can be used to detect and use mods, which is applicable for any game or custom engine.
+
+<a name="general"></a>
+
+## General
+
+* The Chroma SDK allows an application or game to set the details in the Chroma Apps list within the `Chroma App`.
+
+This document provides a guide to integrating Chroma RGB using the Chroma Unity SDK. Chroma can be included through premade Chroma animations or APIs. Here is the list of available methods:
+
+* [Initialize SDK](#initialize-sdk): Initialize the Chroma SDK to use the library.
+
+* [Is Active](#is-active): Check if the app/game has Chroma focus.
+
+* [Is Connected](#is-connected): Check if Chroma hardware is connected.
+
+* [Play Chroma Animation](#play-chroma-animation): Playback a Chroma animation asset.
+
+* [Set Event Name](#set-event-name): Name a game event or game trigger in order to also add Haptics to the Chroma event.
+
+* [Use Forward Chroma Events](#use-forward-chroma-events): Enable or disable automatic invocation of `SetEventName()` when invoking `PlayAnimation()` using the animation name.
+
+<a name="chroma-sensa"></a>
+
+## Chroma Sensa
+
+Chroma Sensa is the combination of Chroma and Razer Sensa HD Haptics in a single SDK. By integrating RGB lighting and haptics into game environments and events, players can enjoy a truly immersive gaming experience. The `Chroma SDK` is capable of playing Chroma animations and haptics on the Razer Sensa HD Haptics devices. The default mode allows automatic triggering of haptics effects when Chroma animations are played with `PlayAnimation()`. Manual mode is set by `UseForwardChromaEvents(false)` and haptics can be triggered independently of Chroma animations with SetEventName().
+
+![image_8](images/image_8.png)
+
+Event names can follow a naming convention which assists with the generation of the haptics configuration for your title. Event names are specified with the `SetEventName()` method. The event name suffix can be left off or used to prepopulate common settings for `_ON`, `_OFF`, and `_MERGE`.
+
+* "Jump" - (without a suffix) Existing haptics stop, the named haptic plays to completion and then ends
+
+* "Attack_ON" - Existing haptics continue to play, the named haptic plays as a continuous looping haptic
+
+* "Attack_OFF" - Existing haptics continue to play, the named looping haptic stops
+
+* "Punch_MERGE" - Existing haptics continue to play, the named haptic plays to completion and ends
+
+* "Block_MERGE" - Existing haptics continue to play, the named haptic plays to completion and ends
+
+Upon completion of Chroma and haptic implementation, the list of Chroma events and game triggers should be shared with the team to be add to the game's [Chroma Workshop](https://www.razer.com/chroma-workshop#--games) entry.
+ 
+Targeting features can be **optionally** described for each haptics effect.
+
+* "Target" defaults to `"All"`. GroupID options can be found at https://www.interhaptics.com/doc/interhaptics-engine/#groupid
+
+* "Spatialization" defaults to `"Global"`. Other LateralFlag options can be found at https://www.interhaptics.com/doc/interhaptics-engine/#lateralflag
+
+* "Gain" defaults to 1.0.
+
+<a name="chromatic-scene"></a>
+
+### Chromatic Scene
+
+* The following APIs are demonstrated in the `Assets\Scenes\Scene_Chromatic.unity` sample scene.
+
+![image_1](images/image_1.png)
+
+<a name="synesthesia"></a>
+
+## Synesthesia
+
+The [Synesthesia Console](https://www.interhaptics.com/doc/chroma-sensa/#synesthesia) makes creating the haptics configuration for game integration super easy. Download and run the installer to get started creating a haptics config.
+
+1. Run `SynesthesiaStop.exe` to stop any existing background or haptic consoles
+
+![image_33](images/image_33.png)
+
+2. Run the `Synesthesia Console` for the interactive prompt
+
+![image_34](images/image_34.png)
+
+3. Enter option `1` and press `Enter` to listen for incoming commands
+
+![image_35](images/image_35.png)
+
+4. Launch your game that uses `PlayAnimation` or `SetEvent` directly to trigger haptic commands.
+
+When the application launches and initializes Chroma, the command to `load` the haptic configuration file is sent. When the application receives Chroma focus, the `active` command is sent. When `PlayAnimation` or `SetEvent` is called, the `play` command is sent.
+```
+Command Received : "load;C++ Game Sample Application"
+Command Received : "active;C++ Game Sample Application"
+Command Received : "play;Effect1"
+```
+
+![image_36](images/image_36.png)
+
+5. Play through all the game triggers to send any possible commands the game might use. This will be useful for generating the haptic configuration next.
+
+![image_37](images/image_37.png)
+
+6. Enter option `2` and press `Enter` to generate the haptics configuration
+
+![image_38](images/image_38.png)
+
+7. Enter option `0` and press `Enter` to use the detected application name used by the Chroma initialization
+
+![image_39](images/image_39.png)
+
+8. Enter option `0` and press `Enter` to use activate the new haptic configuration file. Now when the game triggers haptic events, the configured haptic events will play.
+
+![image_40](images/image_40.png)
+
+The `haptic.config` and `haps` default haptics effects were generated in the `HapticFolders` by the console. 
+
+![image_41](images/image_41.png)
+
+The `haptic.config` contains default targeting for the generated entries for each detected command.
+
+```json
+{
+    "ExternalCommands": [
+        {
+            "External_Command_ID": "Effect1",
+            "Haptic_Events": [
+                {
+                    "Haptic_Effect": "Effect1",
+                    "Loop": 1,
+                    "Mixing": "Override",
+                    "Targeting": [
+                        {
+                            "Gain": 1.0,
+                            "Spatialization": "Global",
+                            "Target": "All"
+                        }
+                    ]
+                }
+            ]
+        },
+		...
+	]
+}
+```
+
+<a name="namespace"></a>
+
+## Namespace
+
+Add the Chroma SDK namespace to use the API.
 
 ```
-(Standalone 32-bit builds)
-Win32BuildFolder\Project_Data_Folder\Plugins\x86\CChromaEditorLibrary.dll
-Win32BuildFolder\RzChromaSDK.dll
-Win32BuildFolder\RzChromaStreamPlugin.dll
+using ChromaSDK;
 ```
 
-**64-bit libraries**
+## Initialize SDK
 
-```
-(Standalone 64-bit builds)
-Win64BuildFolder\Project_Data_Folder\Plugins\x64\CChromaEditorLibrary64.dll
-Win64BuildFolder\RzChromaSDK64.dll
-Win64BuildFolder\RzChromaStreamPlugin64.dll
-```
+Initialize the Chroma SDK in order to utilize the API. The `InitSDK` method takes an `AppInfo` parameter which defines the application or game details that will appear in the `Chroma App` within the `Chroma Apps` tab. The expected return result should be `RazerErrors.RZRESULT_SUCCESS` which indicates the API is ready for use. If a non-success result is returned, the Chroma implementation should be disabled until the next time the application or game is launched. Reasons for failure are likely to be the user does not have the `Synapse` or the `Chroma App` installed. After successfully initializing the Chroma SDK, wait approximately 100 ms before playing Chroma animations.
 
-<a name="api-class"></a>
+![image_5](images/image_5.png)
 
-## API Class
+```csharp
+APPINFOTYPE appInfo = new APPINFOTYPE();
+appInfo.Title = "Unity Sample Scene - Chromatic";
+appInfo.Description = "A sample application using Razer Chroma SDK";
 
-The `ChromaAnimationAPI` class provides a wrapper for the Chroma Editor Library. The wrapper for the API can be found at [Assets/UnityNativeChromaSDK/Scripts/ChromaAnimationAPI.cs](Assets/UnityNativeChromaSDK/Scripts/ChromaAnimationAPI.cs).
+appInfo.Author_Name = "Razer";
+appInfo.Author_Contact = "https://developer.razer.com/chroma";
 
-<a name="initialization"></a>
-
-## Initialization
-
----
-
-The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESULT_SUCCESS` when initialization has succeeded. Avoid making calls to the Chroma API when anything other than success is returned. A unsuccessful result indicates `Chroma` is not present on the machine.
-
-```
-  ChromaSDK.APPINFOTYPE appInfo = new APPINFOTYPE();
-
-  appInfo.Title = "Sample Game Title";
-  appInfo.Description = "Sample Game Description";
-  appInfo.Author_Name = "Company Name";
-  appInfo.Author_Contact = "Company Website or Email";
-
+//appInfo.SupportedDevice = 
   //    0x01 | // Keyboards
   //    0x02 | // Mice
   //    0x04 | // Headset
@@ -164,30 +427,206 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
   appInfo.SupportedDevice = (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20);
   //    0x01 | // Utility. (To specifiy this is an utility application)
   //    0x02   // Game. (To specifiy this is a game);
-  appInfo.Category = 0x02;
+appInfo.Category = 1;
   
   int result = ChromaAnimationAPI.InitSDK(ref appInfo);
-  if (result != RazerErrors.RZRESULT_SUCCESS)
-  {
-    Debug.LogError(String.Format("Failed to initialize Chroma SDK with error={0}\r\n", result));
-
-    // avoid making Chroma API calls after a non-zero init result
-    return;
-  }
+if (result == RazerErrors.RZRESULT_SUCCESS)
+{
+    // Init Success! Ready to use the Chroma SDK!
+}
+else
+{
+    // Init Failed! Stop using the Chroma SDK until the next game launch!";
+}
 ```
 
-<a name="api"></a>
+Applications should uninitialize the Chroma SDK with Uninit() for a clean exit. Uninitialization is only needed if the Chroma SDK was successfully initialized.
 
-## API ##
+```c++
+int result = ChromaAnimationAPI::Uninit();
+if (result == RazerErrors.RZRESULT_SUCCESS)
+{
+    // Chroma has been uninitialized!
+}
+else
+{
+    // Uninitialization was unsuccessful!
+}
+```
+
+## Is Active
+
+Many applications and games can use the Chroma SDK at the same time, yet only one can have the Chroma focus. The `APP PRIORITY LIST` defines the priority order and the highest on the list receives the Chroma focus when more than one are actively using the Chroma SDK. Users can adjust the priority order by dragging and dropping or toggling the app completely off. The IsActive() method allows an application or game to check if it has Chroma focus. This allows the title to free up overhead when Chroma is not in use. If a title uses this to check for focus, the state should be periodically checked to turn Chroma back on when focus is returned. When active returns false, the title can stop playing Chroma animations, disable idle animations, and inactivate dynamic Chroma to free up some overhead. Keep in mind that some apps use Chroma notifications so they will only briefly take Chroma focus and then return it typically over a 5 second period.
+
+```csharp
+bool isActive;
+int result = ChromaAnimationAPI.CoreIsActive(out isActive);
+if (result == RazerErrors.RZRESULT_SUCCESS)
+{
+    if (isActive)
+    {
+        // The game currently has the Chroma focus!
+    }
+    else
+  {
+        // The game does not currently have the Chroma focus!"
+    }
+}
+else
+{
+    // Unable to check for Chroma focus. Unexpected result!
+}
+```
+
+## Is Connected
+
+To further reduce overhead, a title can check if supported devices are connected before showing Chroma effects. The IsConnected() method can indicate if supported devices are in use to help determine if Chroma should be active. Games often will include a menu settings option to toggle Chroma RGB support, with being on by default as an additional way that users can minimize overhead.
+
+```csharp
+DEVICE_INFO_TYPE deviceInfo = new DEVICE_INFO_TYPE();
+deviceInfo.DeviceType = 255; // all devices
+int result = ChromaAnimationAPI.CoreIsConnected(ref deviceInfo);
+if (result == RazerErrors.RZRESULT_SUCCESS)
+{
+    if (deviceInfo.Connected > 0)
+    {
+        // Chroma devices are connected!
+    }
+    else
+    {
+        // "No Chroma devices are connected!";
+    }
+}
+else
+{
+    // "Unable to check for Chroma devices. Unexpected result!";
+}
+```
+
+## Play Chroma Animation
+
+The Chroma SDK supports playing premade Chroma animations which are placed in the `StreamingAssets` folder or subfolders within. Chroma animations can be created in the web authoring tools, or dynamically created and modified using the API. Call PlayAnimation() to play Chroma animations with or without looping. Animations have a device category, and playing an animation will stop an existing animation from playing before playing the new animation for the given device category. The animation name is file path of the Chroma animation relative to the `StreamingAssets` folder.
+
+```csharp
+bool loop = false;
+string[] devices =
+{
+    "ChromaLink",
+    "Headset",
+    "Keyboard",
+    "Keypad",
+    "Mouse",
+    "Mousepad"
+};
+foreach (string device in devices)
+{
+    // The Chroma animation files are located in the subfolder at:
+    // Assets/StreamingAssets/Animations/
+    string animationName = string.Format("Animations/Spiral_{0}.chroma", device);
+    ChromaAnimationAPI.PlayAnimationName(animationName, loop);
+}
+```
+
+## Set Event Name
+
+Chroma events can be named to add supplemental technology to your lighting experience. By naming game events and game triggers, the event name can be used as a lookup to play things like haptics effects. `Jump_2s` could be used when playing a Chroma animation of a jump effect that lasts for 2 seconds. Using "Jump_2s" a corresponding haptic effect with similar duration can be added with the Chroma effect to enhance emersion for the title. No other APIs are required to add haptics effects other than to invoke SetEventtName(). To stop haptics playback use SetEventName() with an empty string. A Chroma animation does not need to be playing in order to trigger haptics manually with SetEventName().
+
+```csharp
+int result = ChromaAnimationAPI.CoreSetEventName("Jump_2s");
+if (result == RazerErrors.RZRESULT_SUCCESS)
+{
+    // Chroma event named successfully!"
+}
+else
+{
+    // Unable to set event name. Unexpected result!"
+}
+
+// Stop haptic playback
+result = ChromaAnimationAPI::CoreSetEventName("");
+if (result == RazerErrors.RZRESULT_SUCCESS)
+{
+    // Haptics stopped successfully!"
+}
+else
+{
+    // Unable to stop haptics. Unexpected result!"
+}
+```
+
+## Use Forward Chroma Events
+
+By default when PlayAnimation is called, the animation name is automatically sent to SetEventName(). In order to disable the default behaviour set the toggle to false. PlayAnimation() as shown above is called for each device category. It will be more efficent to use SetEventName() once for the Chroma animation set. Manual mode gives the title explicit control over when SetEventName() is called.
+
+```csharp
+
+bool toggle = false; // manual mode
+ChromaAnimationAPI.UseForwardChromaEvents(toggle);
+if (toggle)
+{
+    // When PlayAnimation is used, the name is sent to SetEventName().
+  }
+else
+{
+    // The PlayAnimation name is not forwarded.
+}
+
+```
+
+## Microsoft Dynamic Lighting
+
+Windows 11 launched Microsoft Dynamic Lighting which is built-in to the Windows Settings Personalization on Windows. Microsoft DL became generally available in `Windows 11 22H2`. See the [list of supported devices](https://learn.microsoft.com/en-us/windows-hardware/design/component-guidelines/dynamic-lighting-devices).
+
+![image_6](images/image_6.png)
+
+For HID compatible devices, with `Dynamic Lighting` set to `ON` and `Chroma App` set as the ambient controller, Chroma effects will display on DL compatible hardware. No extra coding is required to add this compatibility. `Chroma App` handles Chroma compatibility with DL and it is completely automatic.
+
+![image_7](images/image_7.png)
+
+<a name="about"></a>
+
+## About ##
+
+The `Assets/Scenes/Scene_SampleApp.unity` scene shows the sample animations from the [Chroma Animation Guide](http://chroma.razer.com/ChromaGuide/). The referenced sample script can be found at `Packages\RazerChromaSDK\Tests\Scripts\SampleApp.cs`.
+
+**Screenshot:**
+
+![image_45](images/image_45.png)
+
+The `Assets/Scenes/Scene_SampleGameLoop.unity` scene shows how to dynamically set color effects directly through the API and while also playing several animations at the same time using various blending operations. This sample shows how to do Chroma effects without using premade Chroma animations. Chroma animations can be used as source color information when doing dynamic blending. The referenced sample script can be found at `Packages\RazerChromaSDK\Tests\Scripts\SampleGameLoop.cs`.
+
+**Screenshot:**
+
+![image_46](images/image_46.png)
+
+The `Assets/Scenes/Scene_GameSample.unity` scene is a template intended to work with the automated [Chroma Design Converter](https://github.com/razerofficial/ChromaDesignConverter) for quickly porting sample effects from HTML5 to Unity. The referenced sample script can be found at `Packages\RazerChromaSDK\Tests\Scripts\GameSample.cs`. Chroma Design samples are commonly created with 15 sample effects which is why the template has that many buttons to play the sample effects from the ported code. The Chroma Design Converter is not limited to just 15 sample effects and can generate more effect code from the input HTML5 script.
+
+**Screenshot:**
+
+![image_47](images/image_47.png)
+
+---
+
+<a name="api-class"></a>
+
+## API Class
+
+The `ChromaAnimationAPI` class provides a wrapper for the Chroma Editor Library. The wrapper for the API can be found at `Packages\RazerChromaSDK\Runtime\ChromaAnimationAPI.cs`.
+
+<a name="full-api"></a>
+
+## Full API ##
 
 * [AddColor](#AddColor)
 * [AddFrame](#AddFrame)
+* [AddNonZeroAllKeys](#AddNonZeroAllKeys)
 * [AddNonZeroAllKeysAllFrames](#AddNonZeroAllKeysAllFrames)
 * [AddNonZeroAllKeysAllFramesName](#AddNonZeroAllKeysAllFramesName)
 * [AddNonZeroAllKeysAllFramesNameD](#AddNonZeroAllKeysAllFramesNameD)
 * [AddNonZeroAllKeysAllFramesOffset](#AddNonZeroAllKeysAllFramesOffset)
 * [AddNonZeroAllKeysAllFramesOffsetName](#AddNonZeroAllKeysAllFramesOffsetName)
 * [AddNonZeroAllKeysAllFramesOffsetNameD](#AddNonZeroAllKeysAllFramesOffsetNameD)
+* [AddNonZeroAllKeysName](#AddNonZeroAllKeysName)
 * [AddNonZeroAllKeysOffset](#AddNonZeroAllKeysOffset)
 * [AddNonZeroAllKeysOffsetName](#AddNonZeroAllKeysOffsetName)
 * [AddNonZeroAllKeysOffsetNameD](#AddNonZeroAllKeysOffsetNameD)
@@ -271,18 +710,24 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
 * [CopyRedChannelAllFrames](#CopyRedChannelAllFrames)
 * [CopyRedChannelAllFramesName](#CopyRedChannelAllFramesName)
 * [CopyRedChannelAllFramesNameD](#CopyRedChannelAllFramesNameD)
+* [CopyZeroAllKeys](#CopyZeroAllKeys)
 * [CopyZeroAllKeysAllFrames](#CopyZeroAllKeysAllFrames)
 * [CopyZeroAllKeysAllFramesName](#CopyZeroAllKeysAllFramesName)
 * [CopyZeroAllKeysAllFramesNameD](#CopyZeroAllKeysAllFramesNameD)
 * [CopyZeroAllKeysAllFramesOffset](#CopyZeroAllKeysAllFramesOffset)
 * [CopyZeroAllKeysAllFramesOffsetName](#CopyZeroAllKeysAllFramesOffsetName)
 * [CopyZeroAllKeysAllFramesOffsetNameD](#CopyZeroAllKeysAllFramesOffsetNameD)
+* [CopyZeroAllKeysName](#CopyZeroAllKeysName)
+* [CopyZeroAllKeysOffset](#CopyZeroAllKeysOffset)
+* [CopyZeroAllKeysOffsetName](#CopyZeroAllKeysOffsetName)
 * [CopyZeroKeyColor](#CopyZeroKeyColor)
 * [CopyZeroKeyColorName](#CopyZeroKeyColorName)
 * [CopyZeroKeyColorNameD](#CopyZeroKeyColorNameD)
+* [CopyZeroTargetAllKeys](#CopyZeroTargetAllKeys)
 * [CopyZeroTargetAllKeysAllFrames](#CopyZeroTargetAllKeysAllFrames)
 * [CopyZeroTargetAllKeysAllFramesName](#CopyZeroTargetAllKeysAllFramesName)
 * [CopyZeroTargetAllKeysAllFramesNameD](#CopyZeroTargetAllKeysAllFramesNameD)
+* [CopyZeroTargetAllKeysName](#CopyZeroTargetAllKeysName)
 * [CoreCreateChromaLinkEffect](#CoreCreateChromaLinkEffect)
 * [CoreCreateEffect](#CoreCreateEffect)
 * [CoreCreateHeadsetEffect](#CoreCreateHeadsetEffect)
@@ -293,8 +738,11 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
 * [CoreDeleteEffect](#CoreDeleteEffect)
 * [CoreInit](#CoreInit)
 * [CoreInitSDK](#CoreInitSDK)
+* [CoreIsActive](#CoreIsActive)
+* [CoreIsConnected](#CoreIsConnected)
 * [CoreQueryDevice](#CoreQueryDevice)
 * [CoreSetEffect](#CoreSetEffect)
+* [CoreSetEventName](#CoreSetEventName)
 * [CoreStreamBroadcast](#CoreStreamBroadcast)
 * [CoreStreamBroadcastEnd](#CoreStreamBroadcastEnd)
 * [CoreStreamGetAuthShortcode](#CoreStreamGetAuthShortcode)
@@ -424,6 +872,9 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
 * [GetFrameCount](#GetFrameCount)
 * [GetFrameCountName](#GetFrameCountName)
 * [GetFrameCountNameD](#GetFrameCountNameD)
+* [GetFrameDuration](#GetFrameDuration)
+* [GetFrameDurationName](#GetFrameDurationName)
+* [GetFrameName](#GetFrameName)
 * [GetKeyColor](#GetKeyColor)
 * [GetKeyColorD](#GetKeyColorD)
 * [GetKeyColorName](#GetKeyColorName)
@@ -439,6 +890,8 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
 * [GetPlayingAnimationId](#GetPlayingAnimationId)
 * [GetRGB](#GetRGB)
 * [GetRGBD](#GetRGBD)
+* [GetTotalDuration](#GetTotalDuration)
+* [GetTotalDurationName](#GetTotalDurationName)
 * [HasAnimationLoop](#HasAnimationLoop)
 * [HasAnimationLoopName](#HasAnimationLoopName)
 * [HasAnimationLoopNameD](#HasAnimationLoopNameD)
@@ -665,12 +1118,14 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
 * [StopComposite](#StopComposite)
 * [StopCompositeD](#StopCompositeD)
 * [SubtractColor](#SubtractColor)
+* [SubtractNonZeroAllKeys](#SubtractNonZeroAllKeys)
 * [SubtractNonZeroAllKeysAllFrames](#SubtractNonZeroAllKeysAllFrames)
 * [SubtractNonZeroAllKeysAllFramesName](#SubtractNonZeroAllKeysAllFramesName)
 * [SubtractNonZeroAllKeysAllFramesNameD](#SubtractNonZeroAllKeysAllFramesNameD)
 * [SubtractNonZeroAllKeysAllFramesOffset](#SubtractNonZeroAllKeysAllFramesOffset)
 * [SubtractNonZeroAllKeysAllFramesOffsetName](#SubtractNonZeroAllKeysAllFramesOffsetName)
 * [SubtractNonZeroAllKeysAllFramesOffsetNameD](#SubtractNonZeroAllKeysAllFramesOffsetNameD)
+* [SubtractNonZeroAllKeysName](#SubtractNonZeroAllKeysName)
 * [SubtractNonZeroAllKeysOffset](#SubtractNonZeroAllKeysOffset)
 * [SubtractNonZeroAllKeysOffsetName](#SubtractNonZeroAllKeysOffsetName)
 * [SubtractNonZeroAllKeysOffsetNameD](#SubtractNonZeroAllKeysOffsetNameD)
@@ -708,11 +1163,11 @@ The `ChromaAnimationAPI.InitSDK(ref appInfo)` method returns `RazerErrors.RZRESU
 * [UnloadLibraryStreamingPlugin](#UnloadLibraryStreamingPlugin)
 * [UpdateFrame](#UpdateFrame)
 * [UpdateFrameName](#UpdateFrameName)
+* [UseForwardChromaEvents](#UseForwardChromaEvents)
 * [UseIdleAnimation](#UseIdleAnimation)
 * [UseIdleAnimations](#UseIdleAnimations)
 * [UsePreloading](#UsePreloading)
 * [UsePreloadingName](#UsePreloadingName)
-
 ---
 
 <a name="AddColor"></a>
@@ -733,11 +1188,23 @@ Adds a frame to the `Chroma` animation and sets the `duration` (in seconds).
 The `color` is expected to be an array of the dimensions for the `deviceType/device`.
 The `length` parameter is the size of the `color` array. For `EChromaSDKDevice1DEnum`
 the array size should be `MAX LEDS`. For `EChromaSDKDevice2DEnum` the array
-size should be `MAX ROW` * `MAX COLUMN`. Returns the animation id upon
-success. Returns -1 upon failure.
+size should be `MAX ROW` times `MAX COLUMN`. Returns the animation id upon 
+success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.AddFrame(int animationId, float duration, int[] colors, int length);
+```
+
+---
+
+<a name="AddNonZeroAllKeys"></a>
+**AddNonZeroAllKeys**
+
+Add source color to target where color is not black for frame id, reference 
+source and target by id.
+
+```charp
+ChromaAnimationAPI.AddNonZeroAllKeys(int sourceAnimationId, int targetAnimationId, int frameId);
 ```
 
 ---
@@ -810,6 +1277,18 @@ D suffix for limited data types.
 
 ```charp
 double result = ChromaAnimationAPI.AddNonZeroAllKeysAllFramesOffsetNameD(string sourceAnimation, string targetAnimation, double offset);
+```
+
+---
+
+<a name="AddNonZeroAllKeysName"></a>
+**AddNonZeroAllKeysName**
+
+Add source color to target where color is not black for frame id, reference 
+source and target by name.
+
+```charp
+ChromaAnimationAPI.AddNonZeroAllKeysName(string sourceAnimation, string targetAnimation, int frameId);
 ```
 
 ---
@@ -1029,9 +1508,9 @@ ChromaAnimationAPI.CloseAll();
 **CloseAnimation**
 
 Closes the `Chroma` animation to free up resources referenced by id. Returns
-the animation id upon success. Returns -1 upon failure. This might be used
-while authoring effects if there was a change necessitating re-opening
-the animation. The animation id can no longer be used once closed.
+the animation id upon success. Returns negative one upon failure. This 
+might be used while authoring effects if there was a change necessitating 
+re-opening the animation. The animation id can no longer be used once closed.
 
 ```charp
 int result = ChromaAnimationAPI.CloseAnimation(int animationId);
@@ -1808,6 +2287,18 @@ double result = ChromaAnimationAPI.CopyRedChannelAllFramesNameD(string path, dou
 
 ---
 
+<a name="CopyZeroAllKeys"></a>
+**CopyZeroAllKeys**
+
+Copy zero colors from source animation to target animation for the frame. 
+Source and target are referenced by id.
+
+```charp
+ChromaAnimationAPI.CopyZeroAllKeys(int sourceAnimationId, int targetAnimationId, int frameId);
+```
+
+---
+
 <a name="CopyZeroAllKeysAllFrames"></a>
 **CopyZeroAllKeysAllFrames**
 
@@ -1880,6 +2371,44 @@ double result = ChromaAnimationAPI.CopyZeroAllKeysAllFramesOffsetNameD(string so
 
 ---
 
+<a name="CopyZeroAllKeysName"></a>
+**CopyZeroAllKeysName**
+
+Copy zero colors from source animation to target animation for the frame. 
+Source and target are referenced by name.
+
+```charp
+ChromaAnimationAPI.CopyZeroAllKeysName(string sourceAnimation, string targetAnimation, int frameId);
+```
+
+---
+
+<a name="CopyZeroAllKeysOffset"></a>
+**CopyZeroAllKeysOffset**
+
+Copy zero colors from source animation to target animation for the frame 
+id starting at the target offset for the length of the source animation. 
+Source and target are referenced by id.
+
+```charp
+ChromaAnimationAPI.CopyZeroAllKeysOffset(int sourceAnimationId, int targetAnimationId, int frameId, int offset);
+```
+
+---
+
+<a name="CopyZeroAllKeysOffsetName"></a>
+**CopyZeroAllKeysOffsetName**
+
+Copy zero colors from source animation to target animation for the frame 
+id starting at the target offset for the length of the source animation. 
+Source and target are referenced by name.
+
+```charp
+ChromaAnimationAPI.CopyZeroAllKeysOffsetName(string sourceAnimation, string targetAnimation, int frameId, int offset);
+```
+
+---
+
 <a name="CopyZeroKeyColor"></a>
 **CopyZeroKeyColor**
 
@@ -1915,6 +2444,18 @@ double result = ChromaAnimationAPI.CopyZeroKeyColorNameD(string sourceAnimation,
 
 ---
 
+<a name="CopyZeroTargetAllKeys"></a>
+**CopyZeroTargetAllKeys**
+
+Copy nonzero color from source animation to target animation where target 
+is zero for the frame. Source and target are referenced by id.
+
+```charp
+ChromaAnimationAPI.CopyZeroTargetAllKeys(int sourceAnimationId, int targetAnimationId, int frameId);
+```
+
+---
+
 <a name="CopyZeroTargetAllKeysAllFrames"></a>
 **CopyZeroTargetAllKeysAllFrames**
 
@@ -1946,6 +2487,18 @@ D suffix for limited data types.
 
 ```charp
 double result = ChromaAnimationAPI.CopyZeroTargetAllKeysAllFramesNameD(string sourceAnimation, string targetAnimation);
+```
+
+---
+
+<a name="CopyZeroTargetAllKeysName"></a>
+**CopyZeroTargetAllKeysName**
+
+Copy nonzero color from source animation to target animation where target 
+is zero for the frame. Source and target are referenced by name.
+
+```charp
+ChromaAnimationAPI.CopyZeroTargetAllKeysName(string sourceAnimation, string targetAnimation, int frameId);
 ```
 
 ---
@@ -2060,6 +2613,28 @@ int result = ChromaAnimationAPI.CoreInitSDK(ref ChromaSDK.APPINFOTYPE appInfo);
 
 ---
 
+<a name="CoreIsActive"></a>
+**CoreIsActive**
+
+Direct access to low level API.
+
+```charp
+int result = ChromaAnimationAPI.CoreIsActive(BOOL& active);
+```
+
+---
+
+<a name="CoreIsConnected"></a>
+**CoreIsConnected**
+
+Direct access to low level API.
+
+```charp
+int result = ChromaAnimationAPI.CoreIsConnected(ChromaSDK::DEVICE_INFO_TYPE& deviceInfo);
+```
+
+---
+
 <a name="CoreQueryDevice"></a>
 **CoreQueryDevice**
 
@@ -2082,14 +2657,25 @@ int result = ChromaAnimationAPI.CoreSetEffect(Guid effectId);
 
 ---
 
+<a name="CoreSetEventName"></a>
+**CoreSetEventName**
+
+Direct access to low level API.
+
+```charp
+int result = ChromaAnimationAPI.CoreSetEventName(LPCTSTR name);
+```
+
+---
+
 <a name="CoreStreamBroadcast"></a>
 **CoreStreamBroadcast**
 
 Begin broadcasting Chroma RGB data using the stored stream key as the endpoint.
 Intended for Cloud Gaming Platforms,  restore the streaming key when the
 game instance is launched to continue streaming.  streamId is a null terminated
-string  streamKey is a null terminated string  StreamGetStatus() should
-return the READY status to use this method.
+string streamKey is a null terminated string StreamGetStatus() should return 
+the READY status to use this method.
 
 ```charp
 bool result = ChromaAnimationAPI.CoreStreamBroadcast(string streamId, string streamKey);
@@ -2118,7 +2704,10 @@ Length will return as zero if the streaming auth code could not be obtained.
 If length is greater than zero, it will be the length of the returned streaming
 auth code.  Once you have the shortcode, it should be shown to the user
 so they can associate the stream with their Razer ID  StreamGetStatus()
-should return the READY status before invoking this method.
+should return the READY status before invoking this method. platform: is 
+the null terminated string that identifies the source of the stream: { 
+GEFORCE_NOW, LUNA, STADIA, GAME_PASS } title: is the null terminated string 
+that identifies the application or game.
 
 ```charp
 ChromaAnimationAPI.CoreStreamGetAuthShortcode(ref string shortcode, out byte length, string platform, string title);
@@ -2146,15 +2735,13 @@ bool result = ChromaAnimationAPI.CoreStreamGetFocus(ref string focus, out byte l
 Intended for Cloud Gaming Platforms, store the stream id to persist in user
 preferences to continue streaming if the game is suspended or closed. shortcode:
 The shortcode is a null terminated string. Use the shortcode that authorized
-the stream to obtain the stream id.  streamId should be a preallocated
-buffer to get the stream key. The buffer should have a length of 48.  length:
-Length will return zero if the key could not be obtained. If the length
-is greater than zero, it will be the length of the returned streaming id.
-Retrieve the stream id after authorizing the shortcode. The authorization
-window will expire in 5 minutes. Be sure to save the stream key before
-the window expires.  platform: is the null terminated string that identifies
-the source of the stream: { GEFORCE_NOW, LUNA, STADIA, GAME_PASS }
-StreamGetStatus() should return the READY status to use this method.
+the stream to obtain the stream id. streamId should be a preallocated buffer 
+to get the stream key. The buffer should have a length of 48. length: Length 
+will return zero if the key could not be obtained. If the length is greater 
+than zero, it will be the length of the returned streaming id. Retrieve 
+the stream id after authorizing the shortcode. The authorization window 
+will expire in 5 minutes. Be sure to save the stream key before the window 
+expires. StreamGetStatus() should return the READY status to use this method.
 
 ```charp
 ChromaAnimationAPI.CoreStreamGetId(string shortcode, ref string streamId, out byte length);
@@ -2168,16 +2755,15 @@ ChromaAnimationAPI.CoreStreamGetId(string shortcode, ref string streamId, out by
 Intended for Cloud Gaming Platforms, store the streaming key to persist
 in user preferences to continue streaming if the game is suspended or closed.
 shortcode: The shortcode is a null terminated string. Use the shortcode
-that authorized the stream to obtain the stream key.  If the status is
-in the BROADCASTING or WATCHING state, passing a NULL shortcode will return
-the active streamId.  streamKey should be a preallocated buffer to get
-the stream key. The buffer should have a length of 48.  length: Length
-will return zero if the key could not be obtained. If the length is greater
+that authorized the stream to obtain the stream key. If the status is in 
+the BROADCASTING or WATCHING state, passing a NULL shortcode will return 
+the active streamId. streamKey should be a preallocated buffer to get the 
+stream key. The buffer should have a length of 48. length: Length will 
+return zero if the key could not be obtained. If the length is greater 
 than zero, it will be the length of the returned streaming key.  Retrieve
 the stream key after authorizing the shortcode. The authorization window
 will expire in 5 minutes. Be sure to save the stream key before the window
-expires.  StreamGetStatus() should return the READY status to use this
-method.
+expires. StreamGetStatus() should return the READY status to use this method.
 
 ```charp
 ChromaAnimationAPI.CoreStreamGetKey(string shortcode, ref string streamKey, out byte length);
@@ -2288,10 +2874,10 @@ int result = ChromaAnimationAPI.CoreUnInit();
 Creates a `Chroma` animation at the given path. The `deviceType` parameter
 uses `EChromaSDKDeviceTypeEnum` as an integer. The `device` parameter uses
 `EChromaSDKDevice1DEnum` or `EChromaSDKDevice2DEnum` as an integer, respective
-to the `deviceType`. Returns the animation id upon success. Returns -1
-upon failure. Saves a `Chroma` animation file with the `.chroma` extension
-at the given path. Returns the animation id upon success. Returns -1 upon
-failure.
+to the `deviceType`. Returns the animation id upon success. Returns negative 
+one upon failure. Saves a `Chroma` animation file with the `.chroma` extension 
+at the given path. Returns the animation id upon success. Returns negative 
+one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.CreateAnimation(string path, int deviceType, int device);
@@ -2306,8 +2892,8 @@ Creates a `Chroma` animation in memory without creating a file. The `deviceType`
 parameter uses `EChromaSDKDeviceTypeEnum` as an integer. The `device` parameter
 uses `EChromaSDKDevice1DEnum` or `EChromaSDKDevice2DEnum` as an integer,
 respective to the `deviceType`. Returns the animation id upon success.
-Returns -1 upon failure. Returns the animation id upon success. Returns
--1 upon failure.
+Returns negative one upon failure. Returns the animation id upon success. 
+Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.CreateAnimationInMemory(int deviceType, int device);
@@ -3544,7 +4130,7 @@ double result = ChromaAnimationAPI.GetCurrentFrameNameD(string path);
 
 Returns the `EChromaSDKDevice1DEnum` or `EChromaSDKDevice2DEnum` of a `Chroma`
 animation respective to the `deviceType`, as an integer upon success. Returns
--1 upon failure.
+negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetDevice(int animationId);
@@ -3557,7 +4143,7 @@ int result = ChromaAnimationAPI.GetDevice(int animationId);
 
 Returns the `EChromaSDKDevice1DEnum` or `EChromaSDKDevice2DEnum` of a `Chroma`
 animation respective to the `deviceType`, as an integer upon success. Returns
--1 upon failure.
+negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetDeviceName(string path);
@@ -3580,7 +4166,7 @@ double result = ChromaAnimationAPI.GetDeviceNameD(string path);
 **GetDeviceType**
 
 Returns the `EChromaSDKDeviceTypeEnum` of a `Chroma` animation as an integer
-upon success. Returns -1 upon failure.
+upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetDeviceType(int animationId);
@@ -3592,7 +4178,7 @@ int result = ChromaAnimationAPI.GetDeviceType(int animationId);
 **GetDeviceTypeName**
 
 Returns the `EChromaSDKDeviceTypeEnum` of a `Chroma` animation as an integer
-upon success. Returns -1 upon failure.
+upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetDeviceTypeName(string path);
@@ -3614,15 +4200,18 @@ double result = ChromaAnimationAPI.GetDeviceTypeNameD(string path);
 <a name="GetFrame"></a>
 **GetFrame**
 
-Gets the frame colors and duration (in seconds) for a `Chroma` animation.
-The `color` is expected to be an array of the expected dimensions for the
-`deviceType/device`. The `length` parameter is the size of the `color`
-array. For `EChromaSDKDevice1DEnum` the array size should be `MAX LEDS`.
-For `EChromaSDKDevice2DEnum` the array size should be `MAX ROW` * `MAX
-COLUMN`. Returns the animation id upon success. Returns -1 upon failure.
+Get the frame colors and duration (in seconds) for a `Chroma` animation 
+referenced by id. The `color` is expected to be an array of the expected 
+dimensions for the `deviceType/device`. The `length` parameter is the size 
+of the `color` array. For `EChromaSDKDevice1DEnum` the array size should 
+be `MAX LEDS`. For `EChromaSDKDevice2DEnum` the array size should be `MAX 
+ROW` times `MAX COLUMN`. Keys are populated only for EChromaSDKDevice2DEnum::DE_Keyboard 
+and EChromaSDKDevice2DEnum::DE_KeyboardExtended. Keys will only use the 
+EChromaSDKDevice2DEnum::DE_Keyboard `MAX_ROW` times `MAX_COLUMN` keysLength. 
+Returns the animation id upon success. Returns negative one upon failure.
 
 ```charp
-int result = ChromaAnimationAPI.GetFrame(int animationId, int frameIndex, out float duration, int[] colors, int length);
+int result = ChromaAnimationAPI.GetFrame(int animationId, int frameId, out float duration, int[] colors, int length, int[] keys, int keysLength);
 ```
 
 ---
@@ -3630,8 +4219,8 @@ int result = ChromaAnimationAPI.GetFrame(int animationId, int frameIndex, out fl
 <a name="GetFrameCount"></a>
 **GetFrameCount**
 
-Returns the frame count of a `Chroma` animation upon success. Returns -1
-upon failure.
+Returns the frame count of a `Chroma` animation upon success. Returns negative 
+one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetFrameCount(int animationId);
@@ -3642,8 +4231,8 @@ int result = ChromaAnimationAPI.GetFrameCount(int animationId);
 <a name="GetFrameCountName"></a>
 **GetFrameCountName**
 
-Returns the frame count of a `Chroma` animation upon success. Returns -1
-upon failure.
+Returns the frame count of a `Chroma` animation upon success. Returns negative 
+one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetFrameCountName(string path);
@@ -3658,6 +4247,49 @@ D suffix for limited data types.
 
 ```charp
 double result = ChromaAnimationAPI.GetFrameCountNameD(string path);
+```
+
+---
+
+<a name="GetFrameDuration"></a>
+**GetFrameDuration**
+
+Returns the duration of an animation frame in seconds upon success. Returns 
+zero upon failure.
+
+```charp
+float result = ChromaAnimationAPI.GetFrameDuration(int animationId, int frameId);
+```
+
+---
+
+<a name="GetFrameDurationName"></a>
+**GetFrameDurationName**
+
+Returns the duration of an animation frame in seconds upon success. Returns 
+zero upon failure.
+
+```charp
+float result = ChromaAnimationAPI.GetFrameDurationName(string path, int frameId);
+```
+
+---
+
+<a name="GetFrameName"></a>
+**GetFrameName**
+
+Get the frame colors and duration (in seconds) for a `Chroma` animation 
+referenced by name. The `color` is expected to be an array of the expected 
+dimensions for the `deviceType/device`. The `length` parameter is the size 
+of the `color` array. For `EChromaSDKDevice1DEnum` the array size should 
+be `MAX LEDS`. For `EChromaSDKDevice2DEnum` the array size should be `MAX 
+ROW` times `MAX COLUMN`. Keys are populated only for EChromaSDKDevice2DEnum::DE_Keyboard 
+and EChromaSDKDevice2DEnum::DE_KeyboardExtended. Keys will only use the 
+EChromaSDKDevice2DEnum::DE_Keyboard `MAX_ROW` times `MAX_COLUMN` keysLength. 
+Returns the animation id upon success. Returns negative one upon failure.
+
+```charp
+int result = ChromaAnimationAPI.GetFrameName(string path, int frameId, out float duration, int[] colors, int length, int[] keys, int keysLength);
 ```
 
 ---
@@ -3724,7 +4356,7 @@ double result = ChromaAnimationAPI.GetLibraryLoadedStateD();
 **GetMaxColumn**
 
 Returns the `MAX COLUMN` given the `EChromaSDKDevice2DEnum` device as an
-integer upon success. Returns -1 upon failure.
+integer upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetMaxColumn(Device2D device);
@@ -3747,7 +4379,7 @@ double result = ChromaAnimationAPI.GetMaxColumnD(double device);
 **GetMaxLeds**
 
 Returns the MAX LEDS given the `EChromaSDKDevice1DEnum` device as an integer
-upon success. Returns -1 upon failure.
+upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetMaxLeds(Device1D device);
@@ -3770,7 +4402,7 @@ double result = ChromaAnimationAPI.GetMaxLedsD(double device);
 **GetMaxRow**
 
 Returns the `MAX ROW` given the `EChromaSDKDevice2DEnum` device as an integer
-upon success. Returns -1 upon failure.
+upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.GetMaxRow(Device2D device);
@@ -3832,6 +4464,30 @@ D suffix for limited data types.
 
 ```charp
 double result = ChromaAnimationAPI.GetRGBD(double red, double green, double blue);
+```
+
+---
+
+<a name="GetTotalDuration"></a>
+**GetTotalDuration**
+
+Returns the total duration of an animation in seconds upon success. Returns 
+zero upon failure.
+
+```charp
+float result = ChromaAnimationAPI.GetTotalDuration(int animationId);
+```
+
+---
+
+<a name="GetTotalDurationName"></a>
+**GetTotalDurationName**
+
+Returns the total duration of an animation in seconds upon success. Returns 
+zero upon failure.
+
+```charp
+float result = ChromaAnimationAPI.GetTotalDurationName(string path);
 ```
 
 ---
@@ -4244,7 +4900,7 @@ int result = ChromaAnimationAPI.LerpColor(int from, int to, float t);
 **LoadAnimation**
 
 Loads `Chroma` effects so that the animation can be played immediately.
-Returns the animation id upon success. Returns -1 upon failure.
+Returns the animation id upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.LoadAnimation(int animationId);
@@ -4437,7 +5093,7 @@ double result = ChromaAnimationAPI.MakeBlankFramesRGBNameD(string path, double f
 **MirrorHorizontally**
 
 Flips the color grid horizontally for all `Chroma` animation frames. Returns
-the animation id upon success. Returns -1 upon failure.
+the animation id upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.MirrorHorizontally(int animationId);
@@ -4450,7 +5106,7 @@ int result = ChromaAnimationAPI.MirrorHorizontally(int animationId);
 
 Flips the color grid vertically for all `Chroma` animation frames. This
 method has no effect for `EChromaSDKDevice1DEnum` devices. Returns the
-animation id upon success. Returns -1 upon failure.
+animation id upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.MirrorVertically(int animationId);
@@ -5050,8 +5706,8 @@ double result = ChromaAnimationAPI.OffsetNonZeroColorsNameD(string path, double 
 **OpenAnimation**
 
 Opens a `Chroma` animation file so that it can be played. Returns an animation
-id >= 0 upon success. Returns -1 if there was a failure. The animation
-id is used in most of the API methods.
+id >= 0 upon success. Returns negative one if there was a failure. The 
+animation id is used in most of the API methods.
 
 ```charp
 int result = ChromaAnimationAPI.OpenAnimation(string path);
@@ -5074,10 +5730,10 @@ double result = ChromaAnimationAPI.OpenAnimationD(string path);
 **OpenAnimationFromMemory**
 
 Opens a `Chroma` animation data from memory so that it can be played. `Data`
-is a pointer to byte array of the loaded animation in memory. `Name` will
+is a pointer to BYTE array of the loaded animation in memory. `Name` will 
 be assigned to the animation when loaded. Returns an animation id >= 0
-upon success. Returns -1 if there was a failure. The animation id is used
-in most of the API methods.
+upon success. Returns negative one if there was a failure. The animation 
+id is used in most of the API methods.
 
 ```charp
 int result = ChromaAnimationAPI.OpenAnimationFromMemory(byte[] data, string name);
@@ -5089,7 +5745,7 @@ int result = ChromaAnimationAPI.OpenAnimationFromMemory(byte[] data, string name
 **OpenEditorDialog**
 
 Opens a `Chroma` animation file with the `.chroma` extension. Returns zero
-upon success. Returns -1 if there was a failure.
+upon success. Returns negative one if there was a failure.
 
 ```charp
 int result = ChromaAnimationAPI.OpenEditorDialog(string path);
@@ -5135,7 +5791,8 @@ double result = ChromaAnimationAPI.OpenEditorDialogD(string path);
 **OverrideFrameDuration**
 
 Sets the `duration` for all grames in the `Chroma` animation to the `duration`
-parameter. Returns the animation id upon success. Returns -1 upon failure.
+parameter. Returns the animation id upon success. Returns negative one 
+upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.OverrideFrameDuration(int animationId, float duration);
@@ -5203,7 +5860,8 @@ double result = ChromaAnimationAPI.PauseAnimationNameD(string path);
 **PlayAnimation**
 
 Plays the `Chroma` animation. This will load the animation, if not loaded
-previously. Returns the animation id upon success. Returns -1 upon failure.
+previously. Returns the animation id upon success. Returns negative one 
+upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.PlayAnimation(int animationId);
@@ -5323,11 +5981,11 @@ double result = ChromaAnimationAPI.PlayCompositeD(string name, double loop);
 <a name="PreviewFrame"></a>
 **PreviewFrame**
 
-Displays the `Chroma` animation frame on `Chroma` hardware given the `frameIndex`.
-Returns the animation id upon success. Returns -1 upon failure.
+Displays the `Chroma` animation frame on `Chroma` hardware given the `frameId`. 
+Returns the animation id upon success. Returns negative one upon failure.
 
 ```charp
-int result = ChromaAnimationAPI.PreviewFrame(int animationId, int frameIndex);
+int result = ChromaAnimationAPI.PreviewFrame(int animationId, int frameId);
 ```
 
 ---
@@ -5338,7 +5996,7 @@ int result = ChromaAnimationAPI.PreviewFrame(int animationId, int frameIndex);
 D suffix for limited data types.
 
 ```charp
-double result = ChromaAnimationAPI.PreviewFrameD(double animationId, double frameIndex);
+double result = ChromaAnimationAPI.PreviewFrameD(double animationId, double frameId);
 ```
 
 ---
@@ -5346,11 +6004,11 @@ double result = ChromaAnimationAPI.PreviewFrameD(double animationId, double fram
 <a name="PreviewFrameName"></a>
 **PreviewFrameName**
 
-Displays the `Chroma` animation frame on `Chroma` hardware given the `frameIndex`.
+Displays the `Chroma` animation frame on `Chroma` hardware given the `frameId`. 
 Animaton is referenced by name.
 
 ```charp
-ChromaAnimationAPI.PreviewFrameName(string path, int frameIndex);
+ChromaAnimationAPI.PreviewFrameName(string path, int frameId);
 ```
 
 ---
@@ -5394,7 +6052,7 @@ double result = ChromaAnimationAPI.ReduceFramesNameD(string path, double n);
 **ResetAnimation**
 
 Resets the `Chroma` animation to 1 blank frame. Returns the animation id
-upon success. Returns -1 upon failure.
+upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.ResetAnimation(int animationId);
@@ -5439,8 +6097,8 @@ double result = ChromaAnimationAPI.ResumeAnimationNameD(string path, double loop
 **Reverse**
 
 Reverse the animation frame order of the `Chroma` animation. Returns the
-animation id upon success. Returns -1 upon failure. Animation is referenced
-by id.
+animation id upon success. Returns negative one upon failure. Animation 
+is referenced by id.
 
 ```charp
 int result = ChromaAnimationAPI.Reverse(int animationId);
@@ -5702,7 +6360,7 @@ int result = ChromaAnimationAPI.SetCustomColorFlag2D(int device, int[] colors);
 
 Changes the `deviceType` and `device` of a `Chroma` animation. If the device
 is changed, the `Chroma` animation will be reset with 1 blank frame. Returns
-the animation id upon success. Returns -1 upon failure.
+the animation id upon success. Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.SetDevice(int animationId, int deviceType, int device);
@@ -5735,7 +6393,7 @@ int result = ChromaAnimationAPI.SetEffectCustom1D(int device, int[] colors);
 <a name="SetEffectCustom2D"></a>
 **SetEffectCustom2D**
 
-SetEffectCustom2D will display the referenced colors immediately
+SetEffectCustom2D will display the referenced colors immediately.
 
 ```charp
 int result = ChromaAnimationAPI.SetEffectCustom2D(int device, int[] colors);
@@ -5747,10 +6405,11 @@ int result = ChromaAnimationAPI.SetEffectCustom2D(int device, int[] colors);
 **SetEffectKeyboardCustom2D**
 
 SetEffectKeyboardCustom2D will display the referenced custom keyboard colors
-immediately
+immediately. Colors represent a visual grid layout. Keys represent the 
+hotkeys for any layout.
 
 ```charp
-int result = ChromaAnimationAPI.SetEffectKeyboardCustom2D(int device, int[] colors);
+int result = ChromaAnimationAPI.SetEffectKeyboardCustom2D(int device, int[] colors, int[] keys);
 ```
 
 ---
@@ -6414,7 +7073,7 @@ ChromaAnimationAPI.StopAll();
 **StopAnimation**
 
 Stops animation playback if in progress. Returns the animation id upon success.
-Returns -1 upon failure.
+Returns negative one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.StopAnimation(int animationId);
@@ -6516,6 +7175,18 @@ int result = ChromaAnimationAPI.SubtractColor(int color1, int color2);
 
 ---
 
+<a name="SubtractNonZeroAllKeys"></a>
+**SubtractNonZeroAllKeys**
+
+Subtract the source color from the target color for the frame where the 
+target color is not black. Source and target are referenced by id.
+
+```charp
+ChromaAnimationAPI.SubtractNonZeroAllKeys(int sourceAnimationId, int targetAnimationId, int frameId);
+```
+
+---
+
 <a name="SubtractNonZeroAllKeysAllFrames"></a>
 **SubtractNonZeroAllKeysAllFrames**
 
@@ -6584,6 +7255,18 @@ D suffix for limited data types.
 
 ```charp
 double result = ChromaAnimationAPI.SubtractNonZeroAllKeysAllFramesOffsetNameD(string sourceAnimation, string targetAnimation, double offset);
+```
+
+---
+
+<a name="SubtractNonZeroAllKeysName"></a>
+**SubtractNonZeroAllKeysName**
+
+Subtract the source color from the target color for the frame where the 
+target color is not black. Source and target are referenced by name.
+
+```charp
+ChromaAnimationAPI.SubtractNonZeroAllKeysName(string sourceAnimation, string targetAnimation, int frameId);
 ```
 
 ---
@@ -6810,8 +7493,7 @@ double result = ChromaAnimationAPI.SubtractThresholdColorsMinMaxRGBNameD(string 
 **TrimEndFrames**
 
 Trim the end of the animation. The length of the animation will be the lastFrameId
-
-* 1. Reference the animation by id.
+plus one. Reference the animation by id.
 
 ```charp
 ChromaAnimationAPI.TrimEndFrames(int animationId, int lastFrameId);
@@ -6823,8 +7505,7 @@ ChromaAnimationAPI.TrimEndFrames(int animationId, int lastFrameId);
 **TrimEndFramesName**
 
 Trim the end of the animation. The length of the animation will be the lastFrameId
-
-* 1. Reference the animation by name.
+plus one. Reference the animation by name.
 
 ```charp
 ChromaAnimationAPI.TrimEndFramesName(string path, int lastFrameId);
@@ -6914,7 +7595,8 @@ double result = ChromaAnimationAPI.TrimStartFramesNameD(string path, double numb
 <a name="Uninit"></a>
 **Uninit**
 
-Uninitializes the `ChromaSDK`. Returns 0 upon success. Returns -1 upon failure.
+Uninitializes the `ChromaSDK`. Returns 0 upon success. Returns negative 
+one upon failure.
 
 ```charp
 int result = ChromaAnimationAPI.Uninit();
@@ -6937,7 +7619,8 @@ double result = ChromaAnimationAPI.UninitD();
 **UnloadAnimation**
 
 Unloads `Chroma` effects to free up resources. Returns the animation id
-upon success. Returns -1 upon failure. Reference the animation by id.
+upon success. Returns negative one upon failure. Reference the animation 
+by id.
 
 ```charp
 int result = ChromaAnimationAPI.UnloadAnimation(int animationId);
@@ -7004,17 +7687,17 @@ ChromaAnimationAPI.UnloadLibraryStreamingPlugin();
 <a name="UpdateFrame"></a>
 **UpdateFrame**
 
-Updates the `frameIndex` of the `Chroma` animation and sets the `duration`
-(in seconds). The `color` is expected to be an array of the dimensions
-for the `deviceType/device`. The `length` parameter is the size of the
-`color` array. For `EChromaSDKDevice1DEnum` the array size should be `MAX
-LEDS`. For `EChromaSDKDevice2DEnum` the array size should be `MAX ROW`
-
-* `MAX COLUMN`. Returns the animation id upon success. Returns -1 upon
-failure.
+Updates the `frameId` of the `Chroma` animation referenced by id and sets 
+the `duration` (in seconds). The `color` is expected to be an array of 
+the dimensions for the `deviceType/device`. The `length` parameter is the 
+size of the `color` array. For `EChromaSDKDevice1DEnum` the array size 
+should be `MAX LEDS`. For `EChromaSDKDevice2DEnum` the array size should 
+be `MAX ROW` times `MAX COLUMN`. Keys are populated only for EChromaSDKDevice2DEnum::DE_Keyboard 
+and EChromaSDKDevice2DEnum::DE_KeyboardExtended. Keys will only use the 
+EChromaSDKDevice2DEnum::DE_Keyboard `MAX_ROW` times `MAX_COLUMN` keysLength.
 
 ```charp
-int result = ChromaAnimationAPI.UpdateFrame(int animationId, int frameIndex, float duration, int[] colors, int length);
+int result = ChromaAnimationAPI.UpdateFrame(int animationId, int frameId, float duration, int[] colors, int length, int[] keys, int keysLength);
 ```
 
 ---
@@ -7022,17 +7705,30 @@ int result = ChromaAnimationAPI.UpdateFrame(int animationId, int frameIndex, flo
 <a name="UpdateFrameName"></a>
 **UpdateFrameName**
 
-Updates the `frameIndex` of the `Chroma` animation and sets the `duration`
-(in seconds). The `color` is expected to be an array of the dimensions
-for the `deviceType/device`. The `length` parameter is the size of the
-`color` array. For `EChromaSDKDevice1DEnum` the array size should be `MAX
-LEDS`. For `EChromaSDKDevice2DEnum` the array size should be `MAX ROW`
-
-* `MAX COLUMN`. Returns the animation id upon success. Returns -1 upon
-failure.
+Update the `frameId` of the `Chroma` animation referenced by name and sets 
+the `duration` (in seconds). The `color` is expected to be an array of 
+the dimensions for the `deviceType/device`. The `length` parameter is the 
+size of the `color` array. For `EChromaSDKDevice1DEnum` the array size 
+should be `MAX LEDS`. For `EChromaSDKDevice2DEnum` the array size should 
+be `MAX ROW` times `MAX COLUMN`. Keys are populated only for EChromaSDKDevice2DEnum::DE_Keyboard 
+and EChromaSDKDevice2DEnum::DE_KeyboardExtended. Keys will only use the 
+EChromaSDKDevice2DEnum::DE_Keyboard `MAX_ROW` times `MAX_COLUMN` keysLength. 
+Returns the animation id upon success. Returns negative one upon failure.
 
 ```charp
-int result = ChromaAnimationAPI.UpdateFrameName(string path, int frameIndex, float duration, int[] colors, int length);
+int result = ChromaAnimationAPI.UpdateFrameName(string path, int frameId, float duration, int[] colors, int length, int[] keys, int keysLength);
+```
+
+---
+
+<a name="UseForwardChromaEvents"></a>
+**UseForwardChromaEvents**
+
+On by default, `UseForwardChromaEvents` sends the animation name to `CoreSetEventName` 
+automatically when `PlayAnimationName` is called.
+
+```charp
+ChromaAnimationAPI.UseForwardChromaEvents(bool flag);
 ```
 
 ---
