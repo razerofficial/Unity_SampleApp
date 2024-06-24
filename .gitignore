@@ -12,3 +12,5 @@ Packages/
 Assembly-CSharp.pidb
 Unity_SampleApp.userprefs
 Unity_SampleApp_Unicode.userprefs
+Assets/TextMesh Pro/*
+Assets/TextMesh Pro.meta

@@ -1,6 +1,6 @@
 ﻿namespace ChromaSDK
 {
-    class RazerErrors
+    public class RazerErrors
     {
         // Error codes
         //! Invalid
